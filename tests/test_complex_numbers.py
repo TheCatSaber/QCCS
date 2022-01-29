@@ -78,13 +78,13 @@ class ComplexNumberDivideCheck(unittest.TestCase):
 
 class ComplexNumberModulusCheck(unittest.TestCase):
     def test_modulus_zero(self):
-        self.assertEqual(ComplexNumber.modulus(ComplexNumber(0, 0)), 0)
+        self.assertEqual(ComplexNumber(0, 0).modulus(), 0)
 
     def test_modulus_3_4_5(self):
-        self.assertEqual(ComplexNumber.modulus(ComplexNumber(3, 4)), 5)
+        self.assertEqual(ComplexNumber(3, 4).modulus(), 5)
 
     def test_modulus_4_3_5(self):
-        self.assertEqual(ComplexNumber.modulus(ComplexNumber(4, 3)), 5)
+        self.assertEqual(ComplexNumber(4, 3).modulus(), 5)
 
 
 class ComplexNumberConjugateCheck(unittest.TestCase):
