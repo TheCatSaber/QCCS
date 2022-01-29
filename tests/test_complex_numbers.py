@@ -1,3 +1,4 @@
+import math
 import unittest
 
 from context import ComplexNumber
@@ -100,6 +101,27 @@ class ComplexNumberConjugateCheck(unittest.TestCase):
     def test_conjugate_zero(self):
         self.assertEqual(
             ComplexNumber.conjugate(ComplexNumber(2, 0)), ComplexNumber(2, 0)
+        )
+
+
+class ComplexNumberPolarFormTest(unittest.TestCase):
+    one_one = ComplexNumber(1, 1)
+    sqrt_2_pi_by_4 = (math.sqrt(2), math.pi / 4)
+
+    def test_to_polar(self):
+        self.assertEqual(self.one_one.to_polar(), self.sqrt_2_pi_by_4)
+
+    def _from_polar_setup(self):
+        return ComplexNumber.from_polar(*self.sqrt_2_pi_by_4)
+
+    def test_from_polar_re(self):
+        self.assertAlmostEqual(
+            self._from_polar_setup().get_real(), self.one_one.get_real()
+        )
+
+    def test_from_polar_im(self):
+        self.assertAlmostEqual(
+            self._from_polar_setup().get_imaginary(), self.one_one.get_imaginary()
         )
 
 

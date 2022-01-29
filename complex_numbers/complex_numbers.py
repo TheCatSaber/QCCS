@@ -63,3 +63,12 @@ class ComplexNumber:
         new_real: float = ((c1._re * c2._re) + (c1._im * c2._im)) / modulus_squared
         new_imaginary: float = ((c2._re * c1._im) - (c1._re * c2._im)) / modulus_squared
         return ComplexNumber(new_real, new_imaginary)
+
+    def to_polar(self) -> tuple[float, float]:
+        r = self.modulus(self)
+        theta = math.atan2(self._re, self._im)
+        return r, theta
+    
+    @staticmethod
+    def from_polar(r: float, theta: float) -> ComplexNumber:
+        return ComplexNumber(r * math.cos(theta), r * math.sin(theta))
