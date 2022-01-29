@@ -29,13 +29,11 @@ class ComplexNumber:
         else:
             return self.get_real() == other.get_real() and self.get_imaginary() == other.get_imaginary()  # type: ignore
 
-    @staticmethod
-    def modulus(c: ComplexNumber) -> float:
-        return math.sqrt(ComplexNumber.modulus_squared(c))
+    def modulus(self) -> float:
+        return math.sqrt(self.modulus_squared())
 
-    @staticmethod
-    def modulus_squared(c: ComplexNumber) -> float:
-        return (c._re * c._re) + (c._im * c._im)
+    def modulus_squared(self) -> float:
+        return (self._re * self._re) + (self._im * self._im)
 
     @staticmethod
     def conjugate(c: ComplexNumber) -> ComplexNumber:
@@ -57,7 +55,7 @@ class ComplexNumber:
 
     @staticmethod
     def divide(c1: ComplexNumber, c2: ComplexNumber) -> ComplexNumber:
-        modulus_squared = ComplexNumber.modulus_squared(c2)
+        modulus_squared = c2.modulus_squared()
         if modulus_squared == 0:
             raise ValueError("c2 cannot have a modulus_squared of 0.")
         new_real: float = ((c1._re * c2._re) + (c1._im * c2._im)) / modulus_squared
@@ -65,7 +63,7 @@ class ComplexNumber:
         return ComplexNumber(new_real, new_imaginary)
 
     def to_polar(self) -> tuple[float, float]:
-        r = self.modulus(self)
+        r = self.modulus()
         theta = math.atan2(self._re, self._im)
         return r, theta
     
