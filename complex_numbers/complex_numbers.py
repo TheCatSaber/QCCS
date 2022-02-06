@@ -26,8 +26,7 @@ class ComplexNumber:
     def __eq__(self, other: object) -> bool:
         if type(other) != type(self):
             return False
-        else:
-            return self.get_real() == other.get_real() and self.get_imaginary() == other.get_imaginary()  # type: ignore
+        return self.get_real() == other.get_real() and self.get_imaginary() == other.get_imaginary()  # type: ignore
 
     def modulus(self) -> float:
         return math.sqrt(self.modulus_squared())
@@ -66,7 +65,10 @@ class ComplexNumber:
         r = self.modulus()
         theta = math.atan2(self._re, self._im)
         return r, theta
-    
+
     @staticmethod
     def from_polar(r: float, theta: float) -> ComplexNumber:
         return ComplexNumber(r * math.cos(theta), r * math.sin(theta))
+
+    def inverse(self) -> ComplexNumber:
+        return ComplexNumber(-self._re, -self._im)

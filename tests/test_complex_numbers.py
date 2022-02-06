@@ -104,7 +104,7 @@ class ComplexNumberConjugateCheck(unittest.TestCase):
         )
 
 
-class ComplexNumberPolarFormTest(unittest.TestCase):
+class ComplexNumberPolarFormCheck(unittest.TestCase):
     one_one = ComplexNumber(1, 1)
     sqrt_2_pi_by_4 = (math.sqrt(2), math.pi / 4)
 
@@ -125,5 +125,17 @@ class ComplexNumberPolarFormTest(unittest.TestCase):
         )
 
 
+class ComplexNumberInverseCheck(unittest.TestCase):
+    def test_zero(self):
+        zero_zero = ComplexNumber(0, 0)
+        self.assertEqual(zero_zero, zero_zero.inverse())
+
+    def test_one_one(self):
+        self.assertEqual(ComplexNumber(-1, -1), ComplexNumber(1, 1).inverse())
+
+    def test_two_minus_one(self):
+        self.assertEqual(ComplexNumber(-2, 1), ComplexNumber(2, -1).inverse())
+
+
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main()  # pragma: no cover
