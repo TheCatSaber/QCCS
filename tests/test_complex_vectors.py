@@ -2,11 +2,10 @@ import unittest
 
 from context import ComplexNumber, ComplexVector
 
-zero_vector = ComplexVector(1, [ComplexNumber(0, 0)])
-v1 = ComplexVector(1, [ComplexNumber(1, 1)])
-v2 = ComplexVector(2, [ComplexNumber(2, 1), ComplexNumber(1, 1)])
+zero_vector = ComplexVector([ComplexNumber(0, 0)])
+v1 = ComplexVector([ComplexNumber(1, 1)])
+v2 = ComplexVector([ComplexNumber(2, 1), ComplexNumber(1, 1)])
 v5 = ComplexVector(
-    5,
     [
         ComplexNumber(0, 0),
         ComplexNumber(3, 1),
@@ -15,12 +14,6 @@ v5 = ComplexVector(
         ComplexNumber(-5, -10),
     ],
 )
-
-
-class ComplexVectorInitCheck(unittest.TestCase):
-    def test_invalid_size(self):
-        with self.assertRaises(ValueError):
-            ComplexVector(2, [ComplexNumber(1, 1)])
 
 
 class ComplexVectorGetItemCheck(unittest.TestCase):
@@ -48,11 +41,11 @@ class ComplexVectorEqualityCheck(unittest.TestCase):
         self.assertEqual(False, v1 == v2)
 
     def test_equal_single_different_item(self):
-        self.assertEqual(False, v1 == ComplexVector(1, [ComplexNumber(1, 2)]))
+        self.assertEqual(False, v1 == ComplexVector([ComplexNumber(1, 2)]))
 
     def test_equal_single_same_item(self):
         # Create new ComplexVector, to prove not checking same object.
-        self.assertEqual(True, v1 == ComplexVector(1, [ComplexNumber(1, 1)]))
+        self.assertEqual(True, v1 == ComplexVector([ComplexNumber(1, 1)]))
 
     def test_equal_same_object(self):
         self.assertEqual(True, v2 == v2)
@@ -64,7 +57,7 @@ class ComplexVectorAdditionCheck(unittest.TestCase):
 
     def test_add_v1_to_itself(self):
         self.assertEqual(
-            ComplexVector(1, [ComplexNumber(2, 2)]), ComplexVector.add(v1, v1)
+            ComplexVector([ComplexNumber(2, 2)]), ComplexVector.add(v1, v1)
         )
 
     def test_different_lengths_error(self):
@@ -76,13 +69,12 @@ class ComplexVectorInverseCheck(unittest.TestCase):
         self.assertEqual(zero_vector, zero_vector.inverse())
 
     def test_v1(self):
-        self.assertEqual(ComplexVector(1, [ComplexNumber(-1, -1)]), v1.inverse())
+        self.assertEqual(ComplexVector([ComplexNumber(-1, -1)]), v1.inverse())
 
     def test_5_element(self):
 
         self.assertEqual(
             ComplexVector(
-                5,
                 [
                     ComplexNumber(0, 0),
                     ComplexNumber(-3, -1),
@@ -104,7 +96,6 @@ class ComplexVectorScalarMultiplicationCheck(unittest.TestCase):
         # Should probably have used a smaller example, or one from the textbook
         self.assertEqual(
             ComplexVector(
-                5,
                 [
                     ComplexNumber(0, 0),
                     ComplexNumber(7, 9),

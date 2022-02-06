@@ -6,9 +6,7 @@ from complex_numbers import ComplexNumber
 class ComplexVector:
     _vector: list[ComplexNumber]
 
-    def __init__(self, size: int, complex_values: list[ComplexNumber]) -> None:
-        if size != len(complex_values):
-            raise ValueError("Size does not match length of complex_values list.")
+    def __init__(self, complex_values: list[ComplexNumber]) -> None:
         self._vector = complex_values
 
     def __getitem__(self, n: int) -> ComplexNumber:
@@ -34,13 +32,13 @@ class ComplexVector:
         if len(v1) != len(v2):
             raise ValueError("You can only add ComplexVectors of the same length.")
         return ComplexVector(
-            len(v1), [ComplexNumber.add(v1[i], v2[i]) for i in range(len(v1))]
+            [ComplexNumber.add(v1[i], v2[i]) for i in range(len(v1))]
         )
 
     def inverse(self) -> ComplexVector:
-        return ComplexVector(len(self), [c.inverse() for c in self._vector])
+        return ComplexVector([c.inverse() for c in self._vector])
 
     def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexVector:
         return ComplexVector(
-            len(self), [ComplexNumber.multiply(c, scalar) for c in self._vector]
+            [ComplexNumber.multiply(c, scalar) for c in self._vector]
         )
