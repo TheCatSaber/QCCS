@@ -1,7 +1,13 @@
 import math
 import unittest
 
-from context import ComplexNumber
+from context import (
+    ComplexNumber,
+    complex_number_add,
+    complex_number_divide,
+    complex_number_multiply,
+    complex_number_subtract,
+)
 
 
 class ComplexNumberInitCheck(unittest.TestCase):
@@ -36,13 +42,13 @@ class ComplexNumberInitCheck(unittest.TestCase):
 class ComplexNumberAddCheck(unittest.TestCase):
     def test_add_positive(self):
         self.assertEqual(
-            ComplexNumber.add(ComplexNumber(1, 1), ComplexNumber(3, 2)),
+            complex_number_add(ComplexNumber(1, 1), ComplexNumber(3, 2)),
             ComplexNumber(4, 3),
         )
 
     def test_add_negative_re(self):
         self.assertEqual(
-            ComplexNumber.add(ComplexNumber(1, 1), ComplexNumber(-2, 0)),
+            complex_number_add(ComplexNumber(1, 1), ComplexNumber(-2, 0)),
             ComplexNumber(-1, 1),
         )
 
@@ -50,7 +56,7 @@ class ComplexNumberAddCheck(unittest.TestCase):
 class ComplexNumberSubtractCheck(unittest.TestCase):
     def test_subtract_positive(self):
         self.assertEqual(
-            ComplexNumber.subtract(ComplexNumber(3, 3), ComplexNumber(3, 2)),
+            complex_number_subtract(ComplexNumber(3, 3), ComplexNumber(3, 2)),
             ComplexNumber(0, 1),
         )
 
@@ -58,7 +64,7 @@ class ComplexNumberSubtractCheck(unittest.TestCase):
 class ComplexNumberMultiplyCheck(unittest.TestCase):
     def test_multiply_i_i(self):
         self.assertEqual(
-            ComplexNumber.multiply(ComplexNumber(0, 1), ComplexNumber(0, 1)),
+            complex_number_multiply(ComplexNumber(0, 1), ComplexNumber(0, 1)),
             ComplexNumber(-1, 0),
         )
 
@@ -66,13 +72,13 @@ class ComplexNumberMultiplyCheck(unittest.TestCase):
 class ComplexNumberDivideCheck(unittest.TestCase):
     def test_divide_book_example(self):
         self.assertEqual(
-            ComplexNumber.divide(ComplexNumber(-2, 1), ComplexNumber(1, 2)),
+            complex_number_divide(ComplexNumber(-2, 1), ComplexNumber(1, 2)),
             ComplexNumber(0, 1),
         )
 
     def test_throw_value_error(self):
         self.assertRaises(
-            ValueError, ComplexNumber.divide, ComplexNumber(-2, 1), ComplexNumber(0, 0)
+            ValueError, complex_number_divide, ComplexNumber(-2, 1), ComplexNumber(0, 0)
         )
 
 
@@ -89,19 +95,13 @@ class ComplexNumberModulusCheck(unittest.TestCase):
 
 class ComplexNumberConjugateCheck(unittest.TestCase):
     def test_conjugate_pos_neg(self):
-        self.assertEqual(
-            ComplexNumber.conjugate(ComplexNumber(1, 1)), ComplexNumber(1, -1)
-        )
+        self.assertEqual(ComplexNumber(1, 1).conjugate(), ComplexNumber(1, -1))
 
     def test_conjugate_neg_pos(self):
-        self.assertEqual(
-            ComplexNumber.conjugate(ComplexNumber(1, -2)), ComplexNumber(1, 2)
-        )
+        self.assertEqual(ComplexNumber(1, -2).conjugate(), ComplexNumber(1, 2))
 
     def test_conjugate_zero(self):
-        self.assertEqual(
-            ComplexNumber.conjugate(ComplexNumber(2, 0)), ComplexNumber(2, 0)
-        )
+        self.assertEqual(ComplexNumber(2, 0).conjugate(), ComplexNumber(2, 0))
 
 
 class ComplexNumberPolarFormCheck(unittest.TestCase):
@@ -112,7 +112,7 @@ class ComplexNumberPolarFormCheck(unittest.TestCase):
         self.assertEqual(self.one_one.to_polar(), self.sqrt_2_pi_by_4)
 
     def _from_polar_setup(self):
-        return ComplexNumber.from_polar(*self.sqrt_2_pi_by_4)
+        return ComplexNumber.new_from_polar(*self.sqrt_2_pi_by_4)
 
     def test_from_polar_re(self):
         self.assertAlmostEqual(
