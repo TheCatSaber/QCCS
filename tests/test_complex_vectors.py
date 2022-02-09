@@ -1,6 +1,6 @@
 import unittest
 
-from context import ComplexNumber, ComplexVector
+from context import ComplexNumber, ComplexVector, complex_vector_add
 
 zero_vector = ComplexVector([ComplexNumber(0, 0)])
 v1 = ComplexVector([ComplexNumber(1, 1)])
@@ -53,15 +53,15 @@ class ComplexVectorEqualityCheck(unittest.TestCase):
 
 class ComplexVectorAdditionCheck(unittest.TestCase):
     def test_add_zero_vector(self):
-        self.assertEqual(v1, ComplexVector.add(v1, zero_vector))
+        self.assertEqual(v1, complex_vector_add(v1, zero_vector))
 
     def test_add_v1_to_itself(self):
         self.assertEqual(
-            ComplexVector([ComplexNumber(2, 2)]), ComplexVector.add(v1, v1)
+            ComplexVector([ComplexNumber(2, 2)]), complex_vector_add(v1, v1)
         )
 
     def test_different_lengths_error(self):
-        self.assertRaises(ValueError, ComplexVector.add, v1, v2)
+        self.assertRaises(ValueError, complex_vector_add, v1, v2)
 
 
 class ComplexVectorInverseCheck(unittest.TestCase):

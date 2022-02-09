@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from complex_numbers import ComplexNumber, complex_number_add, complex_number_multiply
+from complex_numbers import ComplexNumber, complex_number_multiply
 
 
 class ComplexVector:
@@ -26,12 +26,6 @@ class ComplexVector:
                 return False
 
         return True
-
-    @staticmethod
-    def add(v1: ComplexVector, v2: ComplexVector) -> ComplexVector:
-        if len(v1) != len(v2):
-            raise ValueError("You can only add ComplexVectors of the same length.")
-        return ComplexVector([complex_number_add(v1[i], v2[i]) for i in range(len(v1))])
 
     def inverse(self) -> ComplexVector:
         return ComplexVector([c.inverse() for c in self._vector])
