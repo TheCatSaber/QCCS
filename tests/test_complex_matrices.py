@@ -1,19 +1,29 @@
 import unittest
 
-from context import ComplexMatrix, complex_matrix_add
+from context import ComplexMatrix, ComplexNumber, complex_matrix_add
 
-m2x3 = ComplexMatrix([[1, 2], [3, 4], [5, 6]])
-m3x2 = ComplexMatrix([[1, 2, 3], [4, 5, 6]])
-m3x3 = ComplexMatrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+one = ComplexNumber(1, 0)
+two = ComplexNumber(2, 0)
+three = ComplexNumber(3, 0)
+four = ComplexNumber(4, 0)
+five = ComplexNumber(5, 0)
+six = ComplexNumber(6, 0)
+seven = ComplexNumber(7, 0)
+eight = ComplexNumber(8, 0)
+nine = ComplexNumber(9, 0)
+
+m2x3 = ComplexMatrix([[one, two], [three, four], [five, six]])
+m3x2 = ComplexMatrix([[one, two, three], [four, five, six]])
+m3x3 = ComplexMatrix([[one, two, three], [four, five, six], [seven, eight, nine]])
 
 
 class ComplexMatrixInitCheck(unittest.TestCase):
     def test_normal_init(self):
-        ComplexMatrix([[1, 2], [3, 4]])
+        ComplexMatrix([[one, two], [three, four]])
 
     def test_init_fails_with_different_lengths(self):
         with self.assertRaises(ValueError):
-            ComplexMatrix([[1, 2], [3]])
+            ComplexMatrix([[one, two], [three]])
 
     def test_zero_length_fails_init(self):
         with self.assertRaises(TypeError):
@@ -42,10 +52,10 @@ class ComplexMatrixGetHeightCheck(unittest.TestCase):
 
 class ComplexMatrixGetRowCheck(unittest.TestCase):
     def test_row_zero(self):
-        self.assertEqual(m3x3.get_row(0), [1, 2, 3])
+        self.assertEqual(m3x3.get_row(0), [one, two, three])
 
     def test_row_max(self):
-        self.assertEqual(m3x3.get_row(2), [7, 8, 9])
+        self.assertEqual(m3x3.get_row(2), [seven, eight, nine])
 
     def test_row_out_of_range(self):
         with self.assertRaises(ValueError):
@@ -60,20 +70,23 @@ class ComplexMatrixGetRowCheck(unittest.TestCase):
 class ComplexMatrixEqualCheck(unittest.TestCase):
     def test_are_equal(self):
         self.assertEqual(
-            ComplexMatrix([[1, 2, 3], [4, 5, 6]]), ComplexMatrix([[1, 2, 3], [4, 5, 6]])
+            ComplexMatrix([[one, two, three], [four, five, six]]),
+            ComplexMatrix([[one, two, three], [four, five, six]]),
         )
 
     def test_wrong_type(self):
-        self.assertNotEqual(ComplexMatrix([[1]]), 1)
+        self.assertNotEqual(ComplexMatrix([[one]]), 1)
 
     def test_wrong_width(self):
-        self.assertNotEqual(ComplexMatrix([[1, 2], [3, 4]]), ComplexMatrix([[1], [2]]))
+        self.assertNotEqual(
+            ComplexMatrix([[one, two], [three, four]]), ComplexMatrix([[one], [two]])
+        )
 
     def test_wrong_height(self):
-        self.assertNotEqual(ComplexMatrix([[1, 2]]), ComplexMatrix([[1, 2], [3, 4]]))
+        self.assertNotEqual(ComplexMatrix([[one, two, three]]), m3x2)
 
     def test_wrong_elements(self):
-        self.assertNotEqual(ComplexMatrix([[1]]), ComplexMatrix([[2]]))
+        self.assertNotEqual(ComplexMatrix([[one]]), ComplexMatrix([[two]]))
 
 
 class ComplexMatrixAddCheck(unittest.TestCase):
@@ -81,46 +94,65 @@ class ComplexMatrixAddCheck(unittest.TestCase):
         self.assertRaises(
             ValueError,
             complex_matrix_add,
-            ComplexMatrix([[1, 2]]),
-            ComplexMatrix([[1, 2, 3]]),
+            ComplexMatrix([[one, two]]),
+            ComplexMatrix([[one, two, three]]),
         )
 
     def test_different_heights(self):
         self.assertRaises(
             ValueError,
             complex_matrix_add,
-            ComplexMatrix([[1, 2], [1, 2]]),
-            ComplexMatrix(([[2, 1]])),
+            ComplexMatrix([[one, two], [one, two]]),
+            ComplexMatrix(([[two, one]])),
         )
 
     def test_width_one_height_one(self):
         self.assertEqual(
-            complex_matrix_add(ComplexMatrix([[1]]), ComplexMatrix([[2]])),
-            ComplexMatrix([[3]]),
+            complex_matrix_add(ComplexMatrix([[one]]), ComplexMatrix([[two]])),
+            ComplexMatrix([[three]]),
         )
 
 
 class ComplexMatrixInverseCheck(unittest.TestCase):
     def test_one_by_one(self):
-        self.assertEqual(ComplexMatrix([[1]]).inverse(), ComplexMatrix([[-1]]))
+        self.assertEqual(
+            ComplexMatrix([[one]]).inverse(), ComplexMatrix([[ComplexNumber(-1, 0)]])
+        )
 
     def test_larger_inverse(self):
         self.assertEqual(
             m3x2.inverse(),
-            ComplexMatrix([[-1, -2, -3], [-4, -5, -6]]),
+            ComplexMatrix(
+                [
+                    [ComplexNumber(-1, 0), ComplexNumber(-2, 0), ComplexNumber(-3, 0)],
+                    [ComplexNumber(-4, 0), ComplexNumber(-5, 0), ComplexNumber(-6, 0)],
+                ]
+            ),
+        )
+
+    def test_complex_number(self):
+        self.assertEqual(
+            ComplexMatrix([[ComplexNumber(1, 1)]]).inverse(),
+            ComplexMatrix([[ComplexNumber(-1, -1)]]),
         )
 
 
 class ComplexMatrixScalarCheck(unittest.TestCase):
     def test_one_by_one(self):
         self.assertEqual(
-            ComplexMatrix([[1]]).scalar_multiplication(-2), ComplexMatrix([[-2]])
+            ComplexMatrix([[two]]).scalar_multiplication(ComplexNumber(-3, 0)),
+            ComplexMatrix([[ComplexNumber(-6, 0)]]),
         )
 
     def test_larger_scalar_multiplication(self):
         self.assertEqual(
-            m3x2.scalar_multiplication(4),
-            ComplexMatrix([[4, 8, 12], [16, 20, 24]]),
+            m3x2.scalar_multiplication(ComplexNumber(0, 2)),
+            ComplexMatrix(
+                [
+                    [ComplexNumber(0, 2), ComplexNumber(0, 4), ComplexNumber(0, 6)],
+                    [ComplexNumber(0, 8), ComplexNumber(0, 10), ComplexNumber(0, 12)],
+                ]
+            ),
         )
 
 

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from complex_numbers import ComplexNumber, complex_number_multiply
+
 
 class ComplexMatrix:
-    _matrix: list[list[int]]
+    _matrix: list[list[ComplexNumber]]
 
-    def __init__(self, matrix: list[list[int]]) -> None:
+    def __init__(self, matrix: list[list[ComplexNumber]]) -> None:
         """Each inner list is a row.
         Each column is the elements in each row with the same index.
         """
@@ -43,19 +45,21 @@ class ComplexMatrix:
         """Get height of a column."""
         return len(self._matrix)
 
-    def get_row(self, i: int) -> list[int]:
+    def get_row(self, i: int) -> list[ComplexNumber]:
         if i < 0 or i >= self.get_height():  # equal to get_height because of 0 indexing
             raise ValueError("Invalid index.")
         return self._matrix[i]
 
     def inverse(self) -> ComplexMatrix:
-        new_matrix: list[list[int]] = []
+        new_matrix: list[list[ComplexNumber]] = []
         for row_index in range(self.get_height()):
-            new_matrix.append([-i for i in self.get_row(row_index)])
+            new_matrix.append([i.inverse() for i in self.get_row(row_index)])
         return ComplexMatrix(new_matrix)
 
-    def scalar_multiplication(self, scalar: int) -> ComplexMatrix:
-        new_matrix: list[list[int]] = []
+    def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexMatrix:
+        new_matrix: list[list[ComplexNumber]] = []
         for row_index in range(self.get_height()):
-            new_matrix.append([i * scalar for i in self.get_row(row_index)])
+            new_matrix.append(
+                [complex_number_multiply(i, scalar) for i in self.get_row(row_index)]
+            )
         return ComplexMatrix(new_matrix)
