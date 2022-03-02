@@ -1,7 +1,13 @@
 import unittest
 
-from context import ComplexMatrix, ComplexNumber, complex_matrix_add
+from context import (
+    ComplexMatrix,
+    ComplexNumber,
+    complex_matrix_add,
+    complex_matrix_multiply,
+)
 
+zero = ComplexNumber(0, 0)
 one = ComplexNumber(1, 0)
 two = ComplexNumber(2, 0)
 three = ComplexNumber(3, 0)
@@ -12,9 +18,11 @@ seven = ComplexNumber(7, 0)
 eight = ComplexNumber(8, 0)
 nine = ComplexNumber(9, 0)
 
+m2x2 = ComplexMatrix([[one, two], [three, four]])
 m2x3 = ComplexMatrix([[one, two], [three, four], [five, six]])
 m3x2 = ComplexMatrix([[one, two, three], [four, five, six]])
 m3x3 = ComplexMatrix([[one, two, three], [four, five, six], [seven, eight, nine]])
+i2 = ComplexMatrix([[one, zero], [zero, one]])
 
 
 class ComplexMatrixInitCheck(unittest.TestCase):
@@ -151,6 +159,38 @@ class ComplexMatrixScalarCheck(unittest.TestCase):
                 [
                     [ComplexNumber(0, 2), ComplexNumber(0, 4), ComplexNumber(0, 6)],
                     [ComplexNumber(0, 8), ComplexNumber(0, 10), ComplexNumber(0, 12)],
+                ]
+            ),
+        )
+
+
+class ComplexMatrixMultiplicationCheck(unittest.TestCase):
+    def test_wrong_size_rejected(self):
+        self.assertRaises(
+            ValueError,
+            complex_matrix_multiply,
+            ComplexMatrix([[one, two], [three, four]]),
+            m2x3,
+        )
+
+    def test_two_by_two_by_identity(self):
+        self.assertEqual(complex_matrix_multiply(m2x2, i2), m2x2)
+
+    def test_different_sizes(self):
+        self.assertEqual(
+            complex_matrix_multiply(
+                ComplexMatrix(
+                    [
+                        [six, ComplexNumber(0, -1), ComplexNumber(5, 2)],
+                        [seven, nine, ComplexNumber(-2, -1)],
+                    ]
+                ),
+                ComplexMatrix([[one, ComplexNumber(0, 1)], [two, three], [four, five]]),
+            ),
+            ComplexMatrix(
+                [
+                    [ComplexNumber(26, 6), ComplexNumber(25, 13)],
+                    [ComplexNumber(17, -4), ComplexNumber(17, 2)],
                 ]
             ),
         )
