@@ -1,6 +1,11 @@
 import unittest
 
-from context import ComplexNumber, ComplexVector, complex_vector_add
+from context import (
+    ComplexNumber,
+    ComplexVector,
+    complex_vector_add,
+    complex_vector_inner_product,
+)
 
 zero_vector = ComplexVector([ComplexNumber(0, 0)])
 v1 = ComplexVector([ComplexNumber(1, 1)])
@@ -105,6 +110,33 @@ class ComplexVectorScalarMultiplicationCheck(unittest.TestCase):
                 ],
             ),
             v5.scalar_multiplication(ComplexNumber(3, 2)),
+        )
+
+
+class ComplexVectorInnerProductCheck(unittest.TestCase):
+    def test_inner_product_invalid_length(self):
+        self.assertRaises(ValueError, complex_vector_inner_product, v1, v2)
+
+    def test_inner_product_zero_vector(self):
+        self.assertEqual(
+            complex_vector_inner_product(zero_vector, zero_vector), ComplexNumber(0, 0)
+        )
+
+    def test_inner_product_length_5_vectors(self):
+        self.assertEqual(
+            complex_vector_inner_product(
+                v5,
+                ComplexVector(
+                    [
+                        ComplexNumber(1, 3),
+                        ComplexNumber(1, -1),
+                        ComplexNumber(2, 4),
+                        ComplexNumber(2.5, 3),
+                        ComplexNumber(1, 0),
+                    ]
+                ),
+            ),
+            ComplexNumber(-1.5, -4),
         )
 
 
