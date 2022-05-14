@@ -63,3 +63,9 @@ class ComplexMatrix:
                 [complex_number_multiply(i, scalar) for i in self.get_row(row_index)]
             )
         return ComplexMatrix(new_matrix)
+
+    def conjugate(self) -> ComplexMatrix:
+        new_matrix: list[list[ComplexNumber]] = []
+        for row_index in range(self.get_height()):
+            new_matrix.append([i.conjugate() for i in self.get_row(row_index)])
+        return ComplexMatrix(new_matrix)

@@ -164,6 +164,30 @@ class ComplexMatrixScalarCheck(unittest.TestCase):
         )
 
 
+class ComplexMatrixConjugateCheck(unittest.TestCase):
+    def test_one_by_one(self):
+        self.assertEqual(
+            ComplexMatrix([[ComplexNumber(0, -1)]]).conjugate(),
+            ComplexMatrix([[ComplexNumber(0, 1)]]),
+        )
+
+    def test_larger_matrix_conjugate(self):
+        self.assertEqual(
+            ComplexMatrix(
+                [
+                    [one, ComplexNumber(0, -1)],
+                    [ComplexNumber(0, 1), ComplexNumber(2, 1)],
+                ]
+            ).conjugate(),
+            ComplexMatrix(
+                [
+                    [one, ComplexNumber(0, 1)],
+                    [ComplexNumber(0, -1), ComplexNumber(2, -1)],
+                ]
+            ),
+        )
+
+
 class ComplexMatrixMultiplicationCheck(unittest.TestCase):
     def test_wrong_size_rejected(self):
         self.assertRaises(
