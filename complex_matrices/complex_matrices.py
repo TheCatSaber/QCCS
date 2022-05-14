@@ -78,3 +78,6 @@ class ComplexMatrix:
                 new_row.append(self.get_row(row_index)[column_index])
             new_matrix.append(new_row)
         return ComplexMatrix(new_matrix)
+
+    def adjoint(self) -> ComplexMatrix:
+        return self.transpose().conjugate()
