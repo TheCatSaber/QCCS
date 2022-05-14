@@ -232,6 +232,32 @@ class ComplexMatrixAdjointCheck(unittest.TestCase):
         )
 
 
+class ComplexMatrixIsHermitianCheck(unittest.TestCase):
+    def test_one_by_one(self):
+        self.assertTrue(ComplexMatrix([[two]]).is_hermitian())
+
+    def test_larger_not_hermitian(self):
+        self.assertFalse(
+            ComplexMatrix(
+                [
+                    [one, ComplexNumber(0, -1), ComplexNumber(0, 3)],
+                    [ComplexNumber(0, 1), ComplexNumber(2, 1), ComplexNumber(3, -1)],
+                ]
+            ).is_hermitian(),
+        )
+
+    def test_larger_is_hermitian(self):
+        self.assertTrue(
+            ComplexMatrix(
+                [
+                    [five, ComplexNumber(4, 5), ComplexNumber(6, -16)],
+                    [ComplexNumber(4, -5), ComplexNumber(13, 0), seven],
+                    [ComplexNumber(6, 16), seven, ComplexNumber(-2.1, 0)],
+                ]
+            ).is_hermitian()
+        )
+
+
 class ComplexMatrixMultiplicationCheck(unittest.TestCase):
     def test_wrong_size_rejected(self):
         self.assertRaises(

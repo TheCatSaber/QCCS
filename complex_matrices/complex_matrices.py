@@ -81,3 +81,6 @@ class ComplexMatrix:
 
     def adjoint(self) -> ComplexMatrix:
         return self.transpose().conjugate()
+
+    def is_hermitian(self) -> bool:
+        return self == self.adjoint()
