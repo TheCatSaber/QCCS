@@ -69,3 +69,12 @@ class ComplexMatrix:
         for row_index in range(self.get_height()):
             new_matrix.append([i.conjugate() for i in self.get_row(row_index)])
         return ComplexMatrix(new_matrix)
+
+    def transpose(self) -> ComplexMatrix:
+        new_matrix: list[list[ComplexNumber]] = []
+        for column_index in range(self.get_width()):
+            new_row: list[ComplexNumber] = []
+            for row_index in range(self.get_height()):
+                new_row.append(self.get_row(row_index)[column_index])
+            new_matrix.append(new_row)
+        return ComplexMatrix(new_matrix)

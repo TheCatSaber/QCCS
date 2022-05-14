@@ -188,6 +188,28 @@ class ComplexMatrixConjugateCheck(unittest.TestCase):
         )
 
 
+class ComplexMatrixTransposeCheck(unittest.TestCase):
+    def test_one_by_one(self):
+        self.assertEqual(ComplexMatrix([[two]]).transpose(), ComplexMatrix([[two]]))
+
+    def test_larger_matrix_transpose(self):
+        self.assertEqual(
+            ComplexMatrix(
+                [
+                    [one, ComplexNumber(0, -1), ComplexNumber(0, 3)],
+                    [ComplexNumber(0, 1), ComplexNumber(2, 1), ComplexNumber(3, -1)],
+                ]
+            ).transpose(),
+            ComplexMatrix(
+                [
+                    [one, ComplexNumber(0, 1)],
+                    [ComplexNumber(0, -1), ComplexNumber(2, 1)],
+                    [ComplexNumber(0, 3), ComplexNumber(3, -1)],
+                ]
+            ),
+        )
+
+
 class ComplexMatrixMultiplicationCheck(unittest.TestCase):
     def test_wrong_size_rejected(self):
         self.assertRaises(
