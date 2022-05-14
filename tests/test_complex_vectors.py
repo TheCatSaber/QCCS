@@ -5,6 +5,7 @@ from context import (
     ComplexNumber,
     ComplexVector,
     complex_vector_add,
+    complex_vector_distance,
     complex_vector_inner_product,
     complex_vector_norm,
 )
@@ -169,6 +170,24 @@ class ComplexVectorNormCheck(unittest.TestCase):
                 ),
             ),
             math.sqrt(439),
+        )
+
+
+class ComplexVectorDistanceCheck(unittest.TestCase):
+    def test_zero_vector_to_vector(self):
+        self.assertEqual(
+            complex_vector_distance(zero_vector, ComplexVector([ComplexNumber(5, 1)])),
+            math.sqrt(26),
+        )
+
+    def test_distance_in_r_cubed(self):
+        two = ComplexNumber(2, 0)
+        self.assertEqual(
+            complex_vector_distance(
+                ComplexVector([ComplexNumber(3, 0), ComplexNumber(1, 0), two]),
+                ComplexVector([two, two, ComplexNumber(-1, 0)]),
+            ),
+            math.sqrt(11),
         )
 
 
