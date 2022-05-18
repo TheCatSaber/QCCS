@@ -26,7 +26,7 @@ class ComplexNumber:
     def __eq__(self, other: object) -> bool:
         if type(other) != type(self):
             return False
-        return self.get_real() == other.get_real() and self.get_imaginary() == other.get_imaginary()  # type: ignore
+        return math.isclose(self.get_real(), other.get_real(), abs_tol=1e-8) and math.isclose(self.get_imaginary(), other.get_imaginary(), abs_tol=1e-8)  # type: ignore
 
     def modulus(self) -> float:
         return math.sqrt(self.modulus_squared())

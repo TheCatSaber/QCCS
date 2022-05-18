@@ -1,3 +1,7 @@
 # type: ignore
-from .complex_matrices import ComplexMatrix
-from .complex_matrix_functions import complex_matrix_add, complex_matrix_multiply
+from .complex_matrices import (
+    ComplexMatrix,
+    complex_matrix_add,
+    complex_matrix_multiply,
+    identity,
+)

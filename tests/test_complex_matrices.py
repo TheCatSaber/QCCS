@@ -1,3 +1,4 @@
+import math
 import unittest
 
 from context import (
@@ -5,6 +6,7 @@ from context import (
     ComplexNumber,
     complex_matrix_add,
     complex_matrix_multiply,
+    identity,
 )
 
 zero = ComplexNumber(0, 0)
@@ -258,6 +260,27 @@ class ComplexMatrixIsHermitianCheck(unittest.TestCase):
         )
 
 
+class ComplexMatrixIsUnitaryCheck(unittest.TestCase):
+    def test_one_by_one(self):
+        self.assertTrue(ComplexMatrix([[one]]).is_unitary())
+
+    def test_three_by_three(self):
+        root_2_over_2 = 1 / math.sqrt(2)
+        complex_root_2_over_2 = ComplexNumber(root_2_over_2, 0)
+        self.assertTrue(
+            ComplexMatrix(
+                [
+                    [complex_root_2_over_2, ComplexNumber(-root_2_over_2, 0), zero],
+                    [complex_root_2_over_2, complex_root_2_over_2, zero],
+                    [zero, zero, one],
+                ]
+            ).is_unitary()
+        )
+
+    def test_two_by_two_false(self):
+        self.assertFalse(ComplexMatrix([[two, one], [one, two]]).is_unitary())
+
+
 class ComplexMatrixMultiplicationCheck(unittest.TestCase):
     def test_wrong_size_rejected(self):
         self.assertRaises(
@@ -287,6 +310,20 @@ class ComplexMatrixMultiplicationCheck(unittest.TestCase):
                     [ComplexNumber(17, -4), ComplexNumber(17, 2)],
                 ]
             ),
+        )
+
+
+class ComplexMatrixIdentityCheck(unittest.TestCase):
+    def test_invalid_n(self):
+        self.assertRaises(ValueError, identity, 0)
+
+    def test_one_by_one(self):
+        self.assertEqual(identity(1), ComplexMatrix([[one]]))
+
+    def test_larger(self):
+        self.assertEqual(
+            identity(3),
+            ComplexMatrix([[one, zero, zero], [zero, one, zero], [zero, zero, one]]),
         )
 
 
