@@ -7,6 +7,7 @@ from context import (
     complex_matrix_add,
     complex_matrix_multiply,
     identity,
+    tensor_product,
 )
 
 zero = ComplexNumber(0, 0)
@@ -19,6 +20,9 @@ six = ComplexNumber(6, 0)
 seven = ComplexNumber(7, 0)
 eight = ComplexNumber(8, 0)
 nine = ComplexNumber(9, 0)
+ten = ComplexNumber(10, 0)
+
+twelve = ComplexNumber(12, 0)
 
 m2x2 = ComplexMatrix([[one, two], [three, four]])
 m2x3 = ComplexMatrix([[one, two], [three, four], [five, six]])
@@ -324,6 +328,48 @@ class ComplexMatrixIdentityCheck(unittest.TestCase):
         self.assertEqual(
             identity(3),
             ComplexMatrix([[one, zero, zero], [zero, one, zero], [zero, zero, one]]),
+        )
+
+
+class ComplexMatrixTensorProductCheck(unittest.TestCase):
+    def test_two_vectors(self):
+        self.assertEqual(
+            tensor_product(
+                ComplexMatrix([[two], [three]]), ComplexMatrix([[four], [six], [three]])
+            ),
+            ComplexMatrix(
+                [[eight], [twelve], [six], [twelve], [ComplexNumber(18, 0)], [nine]]
+            ),
+        )
+
+    def test_matrices(self):
+        self.assertEqual(
+            tensor_product(
+                ComplexMatrix([[one, two], [three, four]]),
+                ComplexMatrix([[one, ComplexNumber(0, 1), three], [five, six, one]]),
+            ),
+            ComplexMatrix(
+                [
+                    [one, ComplexNumber(0, 1), three, two, ComplexNumber(0, 2), six],
+                    [five, six, one, ten, twelve, two],
+                    [
+                        three,
+                        ComplexNumber(0, 3),
+                        nine,
+                        four,
+                        ComplexNumber(0, 4),
+                        twelve,
+                    ],
+                    [
+                        ComplexNumber(15, 0),
+                        ComplexNumber(18, 0),
+                        three,
+                        ComplexNumber(20, 0),
+                        ComplexNumber(24, 0),
+                        four,
+                    ],
+                ]
+            ),
         )
 
 
