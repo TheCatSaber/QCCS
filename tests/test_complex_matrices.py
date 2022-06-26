@@ -373,5 +373,13 @@ class ComplexMatrixTensorProductCheck(unittest.TestCase):
         )
 
 
+class ComplexMatrixIsSquareCheck(unittest.TestCase):
+    def test_two_by_two(self):
+        self.assertTrue(m2x2.is_square())
+
+    def test_two_by_three(self):
+        self.assertFalse(m2x3.is_square())
+
+
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover

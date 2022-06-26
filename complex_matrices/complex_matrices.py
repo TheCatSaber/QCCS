@@ -89,6 +89,9 @@ class ComplexMatrix:
         self_times_adjoint = complex_matrix_multiply(self, self.adjoint())
         return self_times_adjoint == identity(self_times_adjoint.get_width())
 
+    def is_square(self) -> bool:
+        return self.get_width() == self.get_height()
+
 
 def complex_matrix_add(m1: ComplexMatrix, m2: ComplexMatrix) -> ComplexMatrix:
     if m1.get_width() != m2.get_width():
