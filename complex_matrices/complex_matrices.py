@@ -50,6 +50,11 @@ class ComplexMatrix:
             raise ValueError("Invalid index.")
         return self._matrix[i]
 
+    def get_column(self, i: int) -> list[ComplexNumber]:
+        if i < 0 or i >= self.get_width():  # equal to get_width because of 0 indexing
+            raise ValueError("Invalid index.")
+        return [row[i] for row in self._matrix]
+
     def inverse(self) -> ComplexMatrix:
         new_matrix: list[list[ComplexNumber]] = []
         for row_index in range(self.get_height()):

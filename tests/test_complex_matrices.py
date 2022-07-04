@@ -81,6 +81,23 @@ class ComplexMatrixGetRowCheck(unittest.TestCase):
             m3x3.get_row(-1)
 
 
+class ComplexMatrixGetColumnCheck(unittest.TestCase):
+    def test_column_zero(self):
+        self.assertEqual(m3x3.get_column(0), [one, four, seven])
+
+    def test_row_max(self):
+        self.assertEqual(m3x3.get_column(2), [three, six, nine])
+
+    def test_column_out_of_range(self):
+        with self.assertRaises(ValueError):
+            m3x3.get_column(3)
+
+    def test_column_negative(self):
+        # TODO: in the future, this should act like a negative index on a normal list.
+        with self.assertRaises(ValueError):
+            m3x3.get_column(-1)
+
+
 class ComplexMatrixEqualCheck(unittest.TestCase):
     def test_are_equal(self):
         self.assertEqual(
