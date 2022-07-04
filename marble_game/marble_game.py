@@ -60,13 +60,13 @@ class MarbleGame:
     def _check_initial_state(
         cls, initial_state: ComplexVector, nodes: int, marble_count: int
     ) -> None:
-        cls._check_positive_integer_vector(initial_state)
+        cls._check_initial_state_type(initial_state)
         cls._check_initial_state_length(initial_state, nodes)
         cls._check_initial_state_total(initial_state, marble_count)
 
     @staticmethod
-    def _check_positive_integer_vector(vector: ComplexVector) -> None:
-        if any(not c.is_positive_integer() for c in vector):
+    def _check_initial_state_type(initial_state: ComplexVector) -> None:
+        if any(not c.is_non_negative_integer() for c in initial_state):
             raise ValueError("All initial states must be positive integers.")
 
     @staticmethod

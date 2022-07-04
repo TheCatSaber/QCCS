@@ -7,7 +7,7 @@ one = ComplexNumber(1, 0)
 two = ComplexNumber(2, 0)
 three = ComplexNumber(3, 0)
 v1 = ComplexVector([one])
-v3 = ComplexVector([one, two, three])
+v3 = ComplexVector([zero, two, three])
 v6 = ComplexVector(
     [ComplexNumber(6, 0), two, one, ComplexNumber(5, 0), three, ComplexNumber(10, 0)]
 )
@@ -25,7 +25,7 @@ m6 = ComplexMatrix(
     ]
 )
 game1 = MarbleGame(1, 1, v1, m1)
-game3 = MarbleGame(3, 6, v3, m3)
+game3 = MarbleGame(3, 5, v3, m3)
 game6 = MarbleGame(6, 27, v6, m6)
 
 
@@ -128,7 +128,7 @@ class MarbleGameCheckEvolution(unittest.TestCase):
         self.assertEqual(v3, game3.calculate_state(0))
 
     def test_one_iteration(self):
-        self.assertEqual(ComplexVector([one, three, two]), game3.calculate_state(1))
+        self.assertEqual(ComplexVector([zero, three, two]), game3.calculate_state(1))
 
     def test_two_iterations(self):
         self.assertEqual(v3, game3.calculate_state(2))
