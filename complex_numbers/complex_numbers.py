@@ -48,3 +48,15 @@ class ComplexNumber:
 
     def inverse(self) -> ComplexNumber:
         return ComplexNumber(-self._re, -self._im)
+
+    def is_real(self) -> bool:
+        return self._im == 0
+
+    def is_positive_real(self) -> bool:
+        return self._re > 0 and self.is_real()
+
+    def is_integer(self) -> bool:
+        return (type(self._re) == int or self._re.is_integer()) and self.is_real()
+
+    def is_positive_integer(self) -> bool:
+        return self.is_positive_real() and self.is_integer()

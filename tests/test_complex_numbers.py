@@ -137,5 +137,42 @@ class ComplexNumberInverseCheck(unittest.TestCase):
         self.assertEqual(ComplexNumber(-2, 1), ComplexNumber(2, -1).inverse())
 
 
+class ComplexNumberIsTypeOfNumberCheck(unittest.TestCase):
+    minus_point_two = ComplexNumber(-0.2, 0)
+
+    def test_is_real_true(self):
+        self.assertTrue(self.minus_point_two.is_real())
+
+    def test_is_real_false(self):
+        self.assertFalse(ComplexNumber(-0.2, 1).is_real())
+
+    def test_is_positive_real_true(self):
+        self.assertTrue(ComplexNumber(0.2, 0).is_positive_real())
+
+    def test_is_positive_real_false_negative(self):
+        self.assertFalse(self.minus_point_two.is_positive_real())
+
+    def test_is_positive_real_false_not_real(self):
+        self.assertFalse(ComplexNumber(0.2, 1).is_positive_real())
+
+    def test_is_integer_true(self):
+        self.assertTrue(ComplexNumber(-2, 0).is_integer())
+
+    def test_is_integer_false_but_real(self):
+        self.assertFalse(self.minus_point_two.is_integer())
+
+    def test_is_integer_false_not_real(self):
+        self.assertFalse(ComplexNumber(-2, -1).is_integer())
+
+    def test_is_positive_integer_true(self):
+        self.assertTrue(ComplexNumber(2, 0).is_positive_integer())
+
+    def test_is_positive_integer_false_but_positive(self):
+        self.assertFalse(ComplexNumber(2.2, 0).is_positive_integer())
+
+    def test_is_positive_integer_false_negative(self):
+        self.assertFalse(ComplexNumber(-2, 0).is_positive_integer())
+
+
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover
