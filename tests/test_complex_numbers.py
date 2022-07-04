@@ -9,6 +9,10 @@ from context import (
     complex_number_subtract,
 )
 
+minus_point_two = ComplexNumber(-0.2, 0)
+zero = ComplexNumber(0, 0)
+point_two = ComplexNumber(0.2, 0)
+
 
 class ComplexNumberInitCheck(unittest.TestCase):
     def test_real(self):
@@ -137,41 +141,79 @@ class ComplexNumberInverseCheck(unittest.TestCase):
         self.assertEqual(ComplexNumber(-2, 1), ComplexNumber(2, -1).inverse())
 
 
-class ComplexNumberIsTypeOfNumberCheck(unittest.TestCase):
-    minus_point_two = ComplexNumber(-0.2, 0)
-
+class ComplexNumberIsRealCheck(unittest.TestCase):
     def test_is_real_true(self):
-        self.assertTrue(self.minus_point_two.is_real())
+        self.assertTrue(minus_point_two.is_real())
 
     def test_is_real_false(self):
         self.assertFalse(ComplexNumber(-0.2, 1).is_real())
 
+
+class ComplexNumberIsPositiveRealCheck(unittest.TestCase):
     def test_is_positive_real_true(self):
-        self.assertTrue(ComplexNumber(0.2, 0).is_positive_real())
+        self.assertTrue(point_two.is_positive_real())
+
+    def test_zero_is_not_positive_real(self):
+        self.assertFalse(zero.is_positive_real())
 
     def test_is_positive_real_false_negative(self):
-        self.assertFalse(self.minus_point_two.is_positive_real())
+        self.assertFalse(minus_point_two.is_positive_real())
 
     def test_is_positive_real_false_not_real(self):
         self.assertFalse(ComplexNumber(0.2, 1).is_positive_real())
 
+
+class ComplexNumberIsNonNegativeRealCheck(unittest.TestCase):
+    def test_zero_is_non_negative_real(self):
+        self.assertTrue(zero.is_non_negative_real())
+
+    def test_is_non_negative_real_true(self):
+        self.assertTrue(point_two.is_non_negative_real())
+
+    def test_is_non_negative_real_false_negative(self):
+        self.assertFalse(minus_point_two.is_non_negative_real())
+
+    def test_is_non_negative_real_false_not_real(self):
+        self.assertFalse(ComplexNumber(0.2, 1).is_non_negative_real())
+
+
+class ComplexNumberIsIntegerCheck(unittest.TestCase):
     def test_is_integer_true(self):
         self.assertTrue(ComplexNumber(-2, 0).is_integer())
 
     def test_is_integer_false_but_real(self):
-        self.assertFalse(self.minus_point_two.is_integer())
+        self.assertFalse(minus_point_two.is_integer())
 
     def test_is_integer_false_not_real(self):
         self.assertFalse(ComplexNumber(-2, -1).is_integer())
 
+
+class ComplexNumberIsPositiveIntegerCheck(unittest.TestCase):
     def test_is_positive_integer_true(self):
         self.assertTrue(ComplexNumber(2, 0).is_positive_integer())
 
+    def test_zero_is_not_positive_integer(self):
+        self.assertFalse(zero.is_positive_integer())
+
     def test_is_positive_integer_false_but_positive(self):
-        self.assertFalse(ComplexNumber(2.2, 0).is_positive_integer())
+        self.assertFalse(point_two.is_positive_integer())
 
     def test_is_positive_integer_false_negative(self):
         self.assertFalse(ComplexNumber(-2, 0).is_positive_integer())
+
+
+class ComplexNumberNonNegativeIntegerCheck(unittest.TestCase):
+    def test_zero_is_non_negative_integer(self):
+        self.assertTrue(zero.is_non_negative_integer())
+
+    def test_is_non_negative_integer_true(self):
+        self.assertTrue(ComplexNumber(2, 0).is_non_negative_integer())
+
+    def test_is_non_negative_integer_false_but_positive(self):
+        self.assertFalse(point_two.is_non_negative_integer())
+
+    def test_is_non_negative_integer_false_negative(self):
+        self.assertFalse(ComplexNumber(-2, 0).is_non_negative_integer())
 
 
 if __name__ == "__main__":
