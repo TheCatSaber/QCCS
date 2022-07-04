@@ -1,5 +1,5 @@
 from complex_matrices import ComplexMatrix
-from complex_numbers import ComplexNumber
+from complex_numbers import ComplexNumber, complex_number_add
 from complex_vectors import ComplexVector
 from shared import complex_matrix_vector_multiply
 
@@ -26,38 +26,77 @@ class MarbleGame:
         `movement_matrix`: how marbles move (`ComplexMatrix`).
         There must be exactly one
         `1` per column, everything else must be `0`.
+
+        Raises `ValueError` if anything is not valid.
         """
-        # Check positive values of nodes and marble_count.
-        if nodes <= 0:
-            raise ValueError("Must have a positive number of nodes in the MarbleGame.")
+        self._check_nodes(nodes)
+        self._check_marble_count(marble_count)
+        self._check_initial_state(initial_state, nodes, marble_count)
+        self._check_movement_matrix(movement_matrix, nodes)
 
-        if marble_count <= 0:
-            raise ValueError(
-                "Must have a positive number of marbles in the MarbleGame."
-            )
+        self.nodes = nodes
+        self.marble_count = marble_count
+        self.initial_state = initial_state
+        self.movement_matrix = movement_matrix
 
-        # Check positive, integer values in initial_state.
-        for c in initial_state:
-            c_re = c.get_real()
-            c_im = c.get_imaginary()
-            if c_re < 0 or int(c_re) != c_re or c_im != 0:
-                raise ValueError("All initial states must be positive integers.")
+    @classmethod
+    def _check_nodes(cls, nodes: int) -> None:
+        cls._check_positive_value(
+            nodes, "Number of nodes in the Marble Game must be positive."
+        )
 
-        # Check length of initial state.
+    @classmethod
+    def _check_marble_count(cls, marble_count: int) -> None:
+        cls._check_positive_value(
+            marble_count, "Number of marbles in the Marble Game must be positive."
+        )
+
+    @staticmethod
+    def _check_positive_value(value: int, error_string: str) -> None:
+        if value <= 0:
+            raise ValueError(error_string)
+
+    @classmethod
+    def _check_initial_state(
+        cls, initial_state: ComplexVector, nodes: int, marble_count: int
+    ) -> None:
+        cls._check_positive_integer_vector(initial_state)
+        cls._check_initial_state_length(initial_state, nodes)
+        cls._check_initial_state_total(initial_state, marble_count)
+
+    @staticmethod
+    def _check_positive_integer_vector(vector: ComplexVector) -> None:
+        if any(not c.is_positive_integer() for c in vector):
+            raise ValueError("All initial states must be positive integers.")
+
+    @staticmethod
+    def _check_initial_state_length(initial_state: ComplexVector, nodes: int) -> None:
         if len(initial_state) != nodes:
             raise ValueError("Length of initial state must be nodes.")
 
-        # Check initial marble count.
-        total = 0
+    @staticmethod
+    def _check_initial_state_total(
+        initial_state: ComplexVector, marble_count: int
+    ) -> None:
+        total = zero
         for count in initial_state:
-            total += count.get_real()
+            total = complex_number_add(total, count)
 
-        if total != marble_count:
+        if total.get_real() != marble_count:
             raise ValueError(
                 "Sum of initial marbles must be equal to the marble count."
             )
 
-        # Check movement_matrix is square, and size equals number of nodes.
+    @classmethod
+    def _check_movement_matrix(cls, movement_matrix: ComplexMatrix, nodes: int) -> None:
+        cls._check_movement_matrix_shape_and_size(movement_matrix, nodes)
+        cls._check_movement_matrix_legal_values(movement_matrix, nodes)
+        cls._check_movement_matrix_column_sum(movement_matrix, nodes)
+
+    @staticmethod
+    def _check_movement_matrix_shape_and_size(
+        movement_matrix: ComplexMatrix, nodes: int
+    ) -> None:
         if not movement_matrix.is_square():
             raise ValueError("movement_matrix must be a square matrix.")
 
@@ -66,30 +105,29 @@ class MarbleGame:
                 "movement_matrix's size must be equal to the number of nodes."
             )
 
-        # Check values in movement_matrix that are 0 or 1.
+    @staticmethod
+    def _check_movement_matrix_legal_values(
+        movement_matrix: ComplexMatrix, nodes: int
+    ) -> None:
         for i in range(nodes):
             if any(
-                (element != zero and element != one)
+                not (element == zero or element == one)
                 for element in movement_matrix.get_row(i)
             ):
                 raise ValueError("All values in movement_matrix must be 0 or 1.")
 
-        # Check exactly one 1 per column.
+    @staticmethod
+    def _check_movement_matrix_column_sum(
+        movement_matrix: ComplexMatrix, nodes: int
+    ) -> None:
         for column_index in range(nodes):
-            column_one_count = 0
-            for row_index in range(nodes):
-                row = movement_matrix.get_row(row_index)
-                if row[column_index] == one:
-                    column_one_count += 1
-            if column_one_count != 1:
+            column_sum = zero
+            for value in movement_matrix.get_column(column_index):
+                column_sum = complex_number_add(column_sum, value)
+            if column_sum != one:
                 raise ValueError(
                     "All columns in movement_matrix must have exactly one 1."
                 )
-
-        self.nodes = nodes
-        self.marble_count = marble_count
-        self.initial_state = initial_state
-        self.movement_matrix = movement_matrix
 
     def calculate_state(self, iterations: int) -> ComplexVector:
         if iterations < 0:
