@@ -95,7 +95,7 @@ class MarbleGameInitFailuresCheck(unittest.TestCase):
             MarbleGame,
             2,
             1,
-            v1,
+            ComplexVector([one, zero]),
             m1,
         )
 
