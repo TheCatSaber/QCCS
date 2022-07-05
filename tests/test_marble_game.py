@@ -1,8 +1,18 @@
 import unittest
 
-from context import ComplexNumber, ComplexMatrix, ComplexVector, MarbleGame
+from context import (
+    ComplexMatrix,
+    ComplexNumber,
+    ComplexVector,
+    MarbleGame,
+    ProbabilisticMarbleGame,
+)
 
+minus_one = ComplexNumber(-1, 0)
 zero = ComplexNumber(0, 0)
+sixth = ComplexNumber(1 / 6, 0)
+third = ComplexNumber(1 / 3, 0)
+half = ComplexNumber(0.5, 0)
 one = ComplexNumber(1, 0)
 two = ComplexNumber(2, 0)
 three = ComplexNumber(3, 0)
@@ -28,6 +38,21 @@ game1 = MarbleGame(1, 1, v1, m1)
 game3 = MarbleGame(3, 5, v3, m3)
 game6 = MarbleGame(6, 27, v6, m6)
 
+v_b = ComplexVector([one, zero, zero, zero, zero, zero, zero, zero])
+m_b = ComplexMatrix(
+    [
+        [zero] * 8,
+        [half] + [zero] * 7,
+        [half] + [zero] * 7,
+        [zero, third, zero, one] + [zero] * 4,
+        [zero, third, zero, zero, one] + [zero] * 3,
+        [zero, third, third, zero, zero, one] + [zero] * 2,
+        [zero] * 2 + [third] + [zero] * 3 + [one, zero],
+        [zero] * 2 + [third] + [zero] * 4 + [one],
+    ]
+)
+game_b = ProbabilisticMarbleGame(8, 1, v_b, m_b)
+
 
 class MarbleGameInitFailuresCheck(unittest.TestCase):
     def test_0_nodes(self):
@@ -42,7 +67,7 @@ class MarbleGameInitFailuresCheck(unittest.TestCase):
             MarbleGame,
             1,
             1,
-            ComplexVector([ComplexNumber(-1, 0)]),
+            ComplexVector([minus_one]),
             m1,
         )
 
@@ -106,7 +131,7 @@ class MarbleGameInitFailuresCheck(unittest.TestCase):
             1,
             1,
             v1,
-            ComplexMatrix([[ComplexNumber(-1, 0)]]),
+            ComplexMatrix([[minus_one]]),
         )
 
     def test_movement_matrix_one_count(self):
@@ -146,6 +171,66 @@ class MarbleGameCheckEvolution(unittest.TestCase):
                 ]
             ),
             game6.calculate_state(1),
+        )
+
+
+class ProbabilisticMarbleGameInitCheck(unittest.TestCase):
+    def test_initial_state_sum(self):
+        self.assertRaises(
+            ValueError,
+            ProbabilisticMarbleGame,
+            3,
+            1,
+            ComplexVector([half, half, half]),
+            m3,
+        )
+
+    def test_initial_state_negative_value(self):
+        self.assertRaises(
+            ValueError,
+            ProbabilisticMarbleGame,
+            3,
+            1,
+            ComplexVector([one, one, minus_one]),
+            m3,
+        )
+
+    def test_invalid_matrix_column_sum(self):
+        self.assertRaises(
+            ValueError,
+            ProbabilisticMarbleGame,
+            3,
+            1,
+            ComplexVector([half, half, zero]),
+            ComplexMatrix([[half, half, zero], [half, zero, half], [half, half, half]]),
+        )
+
+    def test_movement_matrix_negative_value(self):
+        self.assertRaises(
+            ValueError,
+            ProbabilisticMarbleGame,
+            3,
+            5,
+            v3,
+            ComplexMatrix(
+                [[minus_one, one, one], [one, zero, zero], [one, zero, zero]]
+            ),
+        )
+
+    # Do not need a test for greater than 1, as will automatically be caught by sum and/or negative.
+
+    def test_bullet_zero_iterations(self):
+        self.assertEqual(v_b, game_b.calculate_state(0))
+
+    def test_bullet_one_iteration(self):
+        self.assertEqual(
+            ComplexVector([zero, half, half] + [zero] * 5), game_b.calculate_state(1)
+        )
+
+    def test_bullet_two_iterations(self):
+        self.assertEqual(
+            ComplexVector([zero] * 3 + [sixth] * 2 + [third] + [sixth] * 2),
+            game_b.calculate_state(2),
         )
 
 

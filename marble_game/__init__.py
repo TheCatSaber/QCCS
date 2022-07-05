@@ -1,2 +1,2 @@
 # type: ignore
-from .marble_game import MarbleGame
+from .marble_game import MarbleGame, ProbabilisticMarbleGame

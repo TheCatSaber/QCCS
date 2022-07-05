@@ -138,3 +138,33 @@ class MarbleGame:
             new_state = complex_matrix_vector_multiply(self.movement_matrix, new_state)
 
         return new_state
+
+
+class ProbabilisticMarbleGame(MarbleGame):
+    def __init__(
+        self,
+        nodes: int,
+        marble_count: int,
+        initial_state: ComplexVector,
+        movement_matrix: ComplexMatrix,
+    ) -> None:
+
+        super().__init__(nodes, marble_count, initial_state, movement_matrix)
+
+    @staticmethod
+    def _check_initial_state_type(initial_state: ComplexVector) -> None:
+        if any(not c.is_non_negative_real() for c in initial_state):
+            raise ValueError("All initial states must be positive reals.")
+
+    @staticmethod
+    def _check_movement_matrix_legal_values(
+        movement_matrix: ComplexMatrix, nodes: int
+    ) -> None:
+        for i in range(nodes):
+            if any(
+                not (element.is_non_negative_real()) or element.get_real() > 1
+                for element in movement_matrix.get_row(i)
+            ):
+                raise ValueError(
+                    "All values in movement_matrix must be real, between 0 and 1 (inclusive)."
+                )
