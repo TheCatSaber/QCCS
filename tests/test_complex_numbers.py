@@ -27,6 +27,30 @@ class ComplexNumberInitCheck(unittest.TestCase):
     def test___str___negative(self):
         self.assertEqual("-1 - 3i", str(ComplexNumber(-1, -3)))
 
+    def test___str___zero(self):
+        self.assertEqual("0", str(zero))
+
+    def test___str___positive_real(self):
+        self.assertEqual("0.2", str(point_two))
+
+    def test___str___negative_real(self):
+        self.assertEqual("-0.2", str(minus_point_two))
+
+    def test___str___imaginary(self):
+        self.assertEqual("2i", str(ComplexNumber(0, 2)))
+
+    def test___str___minus_imaginary(self):
+        self.assertEqual("-2i", str(ComplexNumber(0, -2)))
+
+    def test___str___given_float_integer_zero(self):
+        self.assertEqual("0", str(ComplexNumber(0.0, 0)))
+
+    def test___str___given_float_integer_two(self):
+        self.assertEqual("2", str(ComplexNumber(2.0, 0)))
+
+    def test___str___given_float_integer_two_i(self):
+        self.assertEqual("2i", str(ComplexNumber(0, 2.0)))
+
     def test___eq___same(self):
         self.assertTrue(ComplexNumber(1, 1) == ComplexNumber(1, 1))
 

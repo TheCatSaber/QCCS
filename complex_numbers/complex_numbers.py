@@ -18,10 +18,24 @@ class ComplexNumber:
         return self._im
 
     def __str__(self) -> str:
+        def handle_int_str(value: float) -> str:
+            if type(value) == int or value.is_integer():
+                return str(int(value))
+            return str(value)
+
+        re_str = handle_int_str(self._re)
+
+        im_str = handle_int_str(self._im)
+
+        if im_str == "0":
+            return re_str
+        if re_str == "0":
+            return im_str + "i"
         sign = "+"
         if self._im < 0:
             sign = "-"
-        return f"{self._re} {sign} {abs(self._im)}i"
+        im_str = im_str.replace("-", "")
+        return f"{re_str} {sign} {im_str}i"
 
     def __eq__(self, other: object) -> bool:
         if type(other) != type(self):
