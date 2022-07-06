@@ -1,3 +1,5 @@
+import math
+
 from complex_matrices import ComplexMatrix
 from complex_numbers import ComplexNumber, complex_number_add
 from complex_vectors import ComplexVector
@@ -167,4 +169,54 @@ class ProbabilisticMarbleGame(MarbleGame):
                 raise ValueError(
                     "All values in movement_matrix must be real, between 0 and 1"
                     " (inclusive)."
+                )
+
+
+class QuantumMarbleGame(MarbleGame):
+    def __init__(
+        self,
+        nodes: int,
+        marble_count: int,
+        initial_state: ComplexVector,
+        movement_matrix: ComplexMatrix,
+    ) -> None:
+        super().__init__(nodes, marble_count, initial_state, movement_matrix)
+
+    @staticmethod
+    def _check_initial_state_type(initial_state: ComplexVector) -> None:
+        # All numbers are valid.
+        # Size will be verified by sum of moduli squared.
+        pass
+
+    @staticmethod
+    def _check_initial_state_total(
+        initial_state: ComplexVector, marble_count: int
+    ) -> None:
+        total = sum(c.modulus_squared() for c in initial_state)
+        if not (math.isclose(total, marble_count, abs_tol=1e-8)):
+            raise ValueError(
+                "Sum of moduli squared of the initial marbles must be equal to the"
+                " marble count."
+            )
+
+    @staticmethod
+    def _check_movement_matrix_legal_values(
+        movement_matrix: ComplexMatrix, nodes: int
+    ) -> None:
+        # All numbers are valid.
+        # Size will be verified by column sum.
+        pass
+
+    @staticmethod
+    def _check_movement_matrix_column_sum(
+        movement_matrix: ComplexMatrix, nodes: int
+    ) -> None:
+        for column_index in range(nodes):
+            column_sum = sum(
+                c.modulus_squared() for c in movement_matrix.get_column(column_index)
+            )
+            if not math.isclose(column_sum, 1, abs_tol=1e-8):
+                raise ValueError(
+                    "Sum of moduli squared of the movement_matrix columns must be equal"
+                    " to 1."
                 )

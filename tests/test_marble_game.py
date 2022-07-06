@@ -1,3 +1,4 @@
+import math
 import unittest
 
 from context import (
@@ -6,6 +7,8 @@ from context import (
     ComplexVector,
     MarbleGame,
     ProbabilisticMarbleGame,
+    QuantumMarbleGame,
+    identity,
 )
 
 minus_one = ComplexNumber(-1, 0)
@@ -13,9 +16,11 @@ zero = ComplexNumber(0, 0)
 sixth = ComplexNumber(1 / 6, 0)
 third = ComplexNumber(1 / 3, 0)
 half = ComplexNumber(0.5, 0)
+one_over_root_two = ComplexNumber(1 / math.sqrt(2), 0)
 one = ComplexNumber(1, 0)
 two = ComplexNumber(2, 0)
 three = ComplexNumber(3, 0)
+i = ComplexNumber(0, 1)
 v1 = ComplexVector([one])
 v3 = ComplexVector([zero, two, three])
 v6 = ComplexVector(
@@ -234,6 +239,69 @@ class ProbabilisticMarbleGameIterationsCheck(unittest.TestCase):
         self.assertEqual(
             ComplexVector([zero] * 3 + [sixth] * 2 + [third] + [sixth] * 2),
             game_b.calculate_state(2),
+        )
+
+
+class QuantumMarbleGameInitCheck(unittest.TestCase):
+    def test_invalid_initial_state_sum(self):
+        self.assertRaises(
+            ValueError,
+            QuantumMarbleGame,
+            2,
+            1,
+            ComplexVector([half, half]),
+            identity(2),
+        )
+
+    def test_invalid_column_sum(self):
+        self.assertRaises(
+            ValueError,
+            QuantumMarbleGame,
+            2,
+            1,
+            ComplexVector([one_over_root_two, one_over_root_two]),
+            ComplexMatrix([[half, half], [half, half]]),
+        )
+
+
+class QuantumMarbleGameIterationCheck(unittest.TestCase):
+    v = ComplexVector(
+        [
+            ComplexNumber(1 / math.sqrt(3), 0),
+            ComplexNumber(0, 2 / math.sqrt(15)),
+            ComplexNumber(math.sqrt(2 / 5), 0),
+        ]
+    )
+    game = QuantumMarbleGame(
+        3,
+        1,
+        v,
+        ComplexMatrix(
+            [
+                [one_over_root_two, one_over_root_two, zero],
+                [
+                    ComplexNumber(0, -1 / math.sqrt(2)),
+                    ComplexNumber(0, 1 / math.sqrt(2)),
+                    zero,
+                ],
+                [zero, zero, i],
+            ]
+        ),
+    )
+
+    def test_zero_iterations(self):
+        self.assertEqual(self.v, self.game.calculate_state(0))
+
+    def test_one_iteration(self):
+        self.assertEqual(
+            ComplexVector(
+                [
+                    ComplexNumber(1 / math.sqrt(6), 2 / math.sqrt(30)),
+                    ComplexNumber(-2 / math.sqrt(30), -1 / math.sqrt(6)),
+                    ComplexNumber(0, math.sqrt(2 / 5)),
+                ]
+            ),
+            self.game.calculate_state(1),
         )
 
 
