@@ -54,7 +54,7 @@ m_b = ComplexMatrix(
 game_b = ProbabilisticMarbleGame(8, 1, v_b, m_b)
 
 
-class MarbleGameInitFailuresCheck(unittest.TestCase):
+class MarbleGameInitCheck(unittest.TestCase):
     def test_0_nodes(self):
         self.assertRaises(ValueError, MarbleGame, 0, 1, v1, m1)
 
@@ -145,7 +145,7 @@ class MarbleGameInitFailuresCheck(unittest.TestCase):
         )
 
 
-class MarbleGameCheckEvolution(unittest.TestCase):
+class MarbleGameIterationsCheck(unittest.TestCase):
     def test_iterations_must_be_positive(self):
         self.assertRaises(ValueError, game1.calculate_state, -1)
 
@@ -217,8 +217,11 @@ class ProbabilisticMarbleGameInitCheck(unittest.TestCase):
             ),
         )
 
-    # Do not need a test for greater than 1, as will automatically be caught by sum and/or negative.
+    # There is no need to test with values greater than one for the movement matrix, and the sum
+    # will be greater than 1, or there will be negative values present.
 
+
+class ProbabilisticMarbleGameIterationsCheck(unittest.TestCase):
     def test_bullet_zero_iterations(self):
         self.assertEqual(v_b, game_b.calculate_state(0))
 

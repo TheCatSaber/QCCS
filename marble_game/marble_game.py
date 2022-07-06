@@ -148,7 +148,6 @@ class ProbabilisticMarbleGame(MarbleGame):
         initial_state: ComplexVector,
         movement_matrix: ComplexMatrix,
     ) -> None:
-
         super().__init__(nodes, marble_count, initial_state, movement_matrix)
 
     @staticmethod
@@ -166,5 +165,6 @@ class ProbabilisticMarbleGame(MarbleGame):
                 for element in movement_matrix.get_row(i)
             ):
                 raise ValueError(
-                    "All values in movement_matrix must be real, between 0 and 1 (inclusive)."
+                    "All values in movement_matrix must be real, between 0 and 1"
+                    " (inclusive)."
                 )
