@@ -97,6 +97,14 @@ class ComplexMatrix:
     def is_square(self) -> bool:
         return self.get_width() == self.get_height()
 
+    def moduli_squared_matrix(self) -> ComplexMatrix:
+        return ComplexMatrix(
+            [
+                [ComplexNumber(c.modulus_squared(), 0) for c in row]
+                for row in self._matrix
+            ]
+        )
+
 
 def complex_matrix_add(m1: ComplexMatrix, m2: ComplexMatrix) -> ComplexMatrix:
     if m1.get_width() != m2.get_width():

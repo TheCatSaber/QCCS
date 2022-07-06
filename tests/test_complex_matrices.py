@@ -24,6 +24,9 @@ ten = ComplexNumber(10, 0)
 
 twelve = ComplexNumber(12, 0)
 
+one_over_root_two = ComplexNumber(1 / math.sqrt(2), 0)
+half = ComplexNumber(1 / 2, 0)
+
 m2x2 = ComplexMatrix([[one, two], [three, four]])
 m2x3 = ComplexMatrix([[one, two], [three, four], [five, six]])
 m3x2 = ComplexMatrix([[one, two, three], [four, five, six]])
@@ -396,6 +399,42 @@ class ComplexMatrixIsSquareCheck(unittest.TestCase):
 
     def test_two_by_three(self):
         self.assertFalse(m2x3.is_square())
+
+
+class ComplexMatrixModuliSquaredMatrixCheck(unittest.TestCase):
+    def test_small_case(self):
+        self.assertEqual(
+            ComplexMatrix(
+                [[one_over_root_two, one_over_root_two], [one, one]]
+            ).moduli_squared_matrix(),
+            ComplexMatrix([[half, half], [one, one]]),
+        )
+
+    def test_larger_case_including_complex_values(self):
+        self.assertEqual(
+            ComplexMatrix(
+                [
+                    [
+                        one,
+                        twelve,
+                        zero,
+                        ComplexNumber(1 / math.sqrt(6), 1 / math.sqrt(6)),
+                    ],
+                    [
+                        ComplexNumber(0, 1),
+                        ComplexNumber(-1 / math.sqrt(2), 0),
+                        ComplexNumber(0, -1 / math.sqrt(5)),
+                        ComplexNumber(-1 / math.sqrt(6), 1 / math.sqrt(6)),
+                    ],
+                ]
+            ).moduli_squared_matrix(),
+            ComplexMatrix(
+                [
+                    [one, ComplexNumber(144, 0), zero, ComplexNumber(1 / 3, 0)],
+                    [one, half, ComplexNumber(1 / 5, 0), ComplexNumber(1 / 3, 0)],
+                ]
+            ),
+        )
 
 
 if __name__ == "__main__":
