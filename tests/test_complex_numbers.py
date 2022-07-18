@@ -51,6 +51,7 @@ class ComplexNumberInitCheck(unittest.TestCase):
     def test___str___given_float_integer_two_i(self):
         self.assertEqual("2i", str(ComplexNumber(0, 2.0)))
 
+class ComplexNumber__eq__Check(unittest.TestCase):
     def test___eq___same(self):
         self.assertTrue(ComplexNumber(1, 1) == ComplexNumber(1, 1))
 
@@ -65,6 +66,9 @@ class ComplexNumberInitCheck(unittest.TestCase):
 
     def test___eq___wrong_type(self):
         self.assertFalse(ComplexNumber(1, 1) == 1)
+    
+    def test___eq___small_rounding_error(self):
+        self.assertTrue(ComplexNumber(1, 0) == ComplexNumber(0.999999999, 0))
 
 
 class ComplexNumberAddCheck(unittest.TestCase):
