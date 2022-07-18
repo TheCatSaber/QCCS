@@ -4,6 +4,7 @@ from complex_matrices import ComplexMatrix, complex_matrix_multiply
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 from marble_game import ProbabilisticMarbleGame
+from user_interaction_shared import get_float, get_positive_int
 
 zero = ComplexNumber(0, 0)
 one = ComplexNumber(1, 0)
@@ -34,14 +35,6 @@ def get_slits_targets_nodes() -> tuple[int, int, int]:
 
     nodes = slits + targets + 1  # + 1 for starting node
     return slits, targets, nodes
-
-
-def get_positive_int(question: str) -> int:
-    while True:
-        user_input = input(question)
-        if not user_input.isdigit() or (user_input := int(user_input)) <= 0:
-            continue
-        return user_input
 
 
 def initial_matrix_creation(slits: int, nodes: int) -> list[list[ComplexNumber]]:
@@ -102,11 +95,7 @@ def get_float_in_range_inclusive(
     question: str, lower_bound: float, upper_bound: float
 ) -> float:
     while True:
-        user_input = input(question)
-        try:
-            user_input = float(user_input)
-        except ValueError:
-            continue
+        user_input = get_float(question)
         if lower_bound <= user_input <= upper_bound:
             return user_input
 
