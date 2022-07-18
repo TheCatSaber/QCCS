@@ -1,5 +1,3 @@
-import math
-
 from complex_numbers import ComplexNumber, complex_number_add, complex_number_multiply
 
 from .complex_vectors import ComplexVector
@@ -23,9 +21,5 @@ def complex_vector_inner_product(v1: ComplexVector, v2: ComplexVector) -> Comple
     return total
 
 
-def complex_vector_norm(v: ComplexVector) -> float:
-    return math.sqrt(complex_vector_inner_product(v, v).get_real())
-
-
 def complex_vector_distance(v1: ComplexVector, v2: ComplexVector) -> float:
-    return complex_vector_norm(complex_vector_add(v1, v2.inverse()))
+    return complex_vector_add(v1, v2.inverse()).norm()

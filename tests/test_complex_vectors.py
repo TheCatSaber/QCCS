@@ -7,7 +7,6 @@ from context import (
     complex_vector_add,
     complex_vector_distance,
     complex_vector_inner_product,
-    complex_vector_norm,
 )
 
 zero_vector = ComplexVector([ComplexNumber(0, 0)])
@@ -145,30 +144,26 @@ class ComplexVectorInnerProductCheck(unittest.TestCase):
 
 class ComplexVectorNormCheck(unittest.TestCase):
     def test_zero_vector(self):
-        self.assertEqual(complex_vector_norm(zero_vector), 0)
+        self.assertEqual(zero_vector.norm(), 0)
 
     def test_three_d_real_vector(self):
         self.assertEqual(
-            complex_vector_norm(
-                ComplexVector(
-                    [ComplexNumber(3, 0), ComplexNumber(-6, 0), ComplexNumber(2, 0)]
-                )
-            ),
+            ComplexVector(
+                [ComplexNumber(3, 0), ComplexNumber(-6, 0), ComplexNumber(2, 0)]
+            ).norm(),
             7,
         )
 
     def test_complex_vector(self):
         self.assertEqual(
-            complex_vector_norm(
-                ComplexVector(
-                    [
-                        ComplexNumber(4, 3),
-                        ComplexNumber(6, -4),
-                        ComplexNumber(12, -7),
-                        ComplexNumber(0, 13),
-                    ]
-                ),
-            ),
+            ComplexVector(
+                [
+                    ComplexNumber(4, 3),
+                    ComplexNumber(6, -4),
+                    ComplexNumber(12, -7),
+                    ComplexNumber(0, 13),
+                ]
+            ).norm(),
             math.sqrt(439),
         )
 

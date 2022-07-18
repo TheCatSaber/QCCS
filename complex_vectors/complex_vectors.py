@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 from complex_numbers import ComplexNumber, complex_number_multiply
 
 
@@ -32,3 +34,6 @@ class ComplexVector:
 
     def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexVector:
         return ComplexVector([complex_number_multiply(c, scalar) for c in self._vector])
+
+    def norm(self) -> float:
+        return math.sqrt(sum(c.modulus_squared() for c in self))
