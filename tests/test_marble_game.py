@@ -5,9 +5,12 @@ from context import (
     ComplexMatrix,
     ComplexNumber,
     ComplexVector,
+    InterferenceDetector,
+    InterferenceDetectorOutput,
     MarbleGame,
     ProbabilisticMarbleGame,
     QuantumMarbleGame,
+    complex_matrix_multiply,
     identity,
 )
 
@@ -302,6 +305,56 @@ class QuantumMarbleGameIterationCheck(unittest.TestCase):
                 ]
             ),
             self.game.calculate_state(1),
+        )
+
+
+class InterferenceDetectorInitCheck(unittest.TestCase):
+    def test_zero_nodes(self):
+        self.assertRaises(ValueError, InterferenceDetector, 0, ComplexMatrix([[one]]))
+
+    def test_movement_matrix_errors_passed_through(self):
+        self.assertRaises(
+            ValueError, InterferenceDetector, 2, ComplexMatrix([[one, one], [one, one]])
+        )
+
+
+class InterferenceDetectorIterationsCheck(unittest.TestCase):
+    p1 = ComplexNumber(-1 / math.sqrt(6), 1 / math.sqrt(6))
+    p2 = ComplexNumber(-1 / math.sqrt(6), -1 / math.sqrt(6))
+    p3 = ComplexNumber(1 / math.sqrt(6), -1 / math.sqrt(6))
+    m = ComplexMatrix(
+        [
+            [zero] * 8,
+            [one_over_root_two] + [zero] * 7,
+            [one_over_root_two] + [zero] * 7,
+            [zero, p1, zero, one] + [zero] * 4,
+            [zero, p2] + [zero] * 2 + [one] + [zero] * 3,
+            [zero, p3, p1] + [zero] * 2 + [one] + [zero] * 2,
+            [zero] * 2 + [p2] + [zero] * 3 + [one, zero],
+            [zero] * 2 + [p3] + [zero] * 4 + [one],
+        ]
+    )
+
+    def test_one_iteration(self):
+        self.assertRaises(
+            ValueError,
+            InterferenceDetector(1, ComplexMatrix([[one]])).calculate_interference,
+            1,
+        )
+
+    def test_bullet_example(self):
+        self.assertTupleEqual(
+            # Just checking that the correct operations are performed for matrix multiplication
+            # and modulus squaring, rather than checking the operations themselves are correct.
+            # And that the interference is correctly detected.
+            InterferenceDetectorOutput(
+                self.m,
+                complex_matrix_multiply(self.m, self.m),
+                self.m.moduli_squared_matrix(),
+                complex_matrix_multiply(self.m, self.m).moduli_squared_matrix(),
+                [(5, 0)],
+            ),
+            InterferenceDetector(8, self.m).calculate_interference(2),
         )
 
 
