@@ -21,6 +21,8 @@ class ComplexNumberInitCheck(unittest.TestCase):
     def test_im(self):
         self.assertEqual(2, ComplexNumber(1, 2).get_imaginary())
 
+
+class ComplexNumber__str__Check(unittest.TestCase):
     def test___str___positive(self):
         self.assertEqual("1 + 2i", str(ComplexNumber(1, 2)))
 
@@ -51,6 +53,13 @@ class ComplexNumberInitCheck(unittest.TestCase):
     def test___str___given_float_integer_two_i(self):
         self.assertEqual("2i", str(ComplexNumber(0, 2.0)))
 
+    def test___str___i(self):
+        self.assertEqual("i", str(ComplexNumber(0, 1)))
+
+    def test___str___negative_i(self):
+        self.assertEqual("-i", str(ComplexNumber(0, -1)))
+
+
 class ComplexNumber__eq__Check(unittest.TestCase):
     def test___eq___same(self):
         self.assertTrue(ComplexNumber(1, 1) == ComplexNumber(1, 1))
@@ -66,7 +75,7 @@ class ComplexNumber__eq__Check(unittest.TestCase):
 
     def test___eq___wrong_type(self):
         self.assertFalse(ComplexNumber(1, 1) == 1)
-    
+
     def test___eq___small_rounding_error(self):
         self.assertTrue(ComplexNumber(1, 0) == ComplexNumber(0.999999999, 0))
 

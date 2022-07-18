@@ -30,7 +30,12 @@ class ComplexNumber:
         if im_str == "0":
             return re_str
         if re_str == "0":
-            return im_str + "i"
+            if im_str == "1":
+                return "i"
+            elif im_str == "-1":
+                return "-i"
+            else:
+                return im_str + "i"
         sign = "+"
         if self._im < 0:
             sign = "-"
