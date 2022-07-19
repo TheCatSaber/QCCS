@@ -1,5 +1,7 @@
 from typing import Callable
 
+from complex_numbers import ComplexNumber
+
 
 def get_positive_int(question: str) -> int:
     while True:
@@ -35,3 +37,7 @@ def less_than(f: Callable[[str], int], limit: float):
                 return a
 
     return wrapper
+
+
+def rounded_complex_number(c: ComplexNumber, digits: int = 8):
+    return ComplexNumber(round(c.get_real(), digits), round(c.get_imaginary(), digits))
