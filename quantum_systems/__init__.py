@@ -1,2 +1,7 @@
 # type: ignore
-from .quantum_systems_utilities import state_probability, transition_amplitude
+from .quantum_systems_utilities import (
+    observable_mean,
+    observable_variance,
+    state_probability,
+    transition_amplitude,
+)
