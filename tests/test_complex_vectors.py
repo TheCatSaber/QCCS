@@ -168,6 +168,32 @@ class ComplexVectorNormCheck(unittest.TestCase):
         )
 
 
+class ComplexVectorNormSquaredCheck(unittest.TestCase):
+    def test_zero_vector(self):
+        self.assertEqual(zero_vector.norm_squared(), 0)
+
+    def test_three_d_real_vector(self):
+        self.assertEqual(
+            ComplexVector(
+                [ComplexNumber(3, 0), ComplexNumber(-6, 0), ComplexNumber(2, 0)]
+            ).norm_squared(),
+            49,
+        )
+
+    def test_complex_vector(self):
+        self.assertEqual(
+            ComplexVector(
+                [
+                    ComplexNumber(4, 3),
+                    ComplexNumber(6, -4),
+                    ComplexNumber(12, -7),
+                    ComplexNumber(0, 13),
+                ]
+            ).norm_squared(),
+            439,
+        )
+
+
 class ComplexVectorDistanceCheck(unittest.TestCase):
     def test_zero_vector_to_vector(self):
         self.assertEqual(

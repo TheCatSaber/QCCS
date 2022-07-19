@@ -36,4 +36,7 @@ class ComplexVector:
         return ComplexVector([complex_number_multiply(c, scalar) for c in self._vector])
 
     def norm(self) -> float:
-        return math.sqrt(sum(c.modulus_squared() for c in self))
+        return math.sqrt(self.norm_squared())
+
+    def norm_squared(self) -> float:
+        return sum(c.modulus_squared() for c in self)
