@@ -437,5 +437,29 @@ class ComplexMatrixModuliSquaredMatrixCheck(unittest.TestCase):
         )
 
 
+class ComplexMatrixIsDiagonalCheck(unittest.TestCase):
+    def test_two_by_two_yes(self):
+        self.assertTrue(ComplexMatrix([[one, zero], [zero, five]]).is_diagonal())
+
+    def test_two_by_two_no(self):
+        self.assertFalse(m2x2.is_diagonal())
+
+    def test_two_by_three(self):
+        self.assertFalse(m2x3.is_diagonal())
+
+    def test_larger(self):
+        self.assertTrue(
+            ComplexMatrix(
+                [
+                    [one, zero, zero, zero, zero],
+                    [zero, five, zero, zero, zero],
+                    [zero, zero, three, zero, zero],
+                    [zero, zero, zero, ComplexNumber(0, 1), zero],
+                    [zero, zero, zero, zero, ComplexNumber(1, 1)],
+                ]
+            ).is_diagonal()
+        )
+
+
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover

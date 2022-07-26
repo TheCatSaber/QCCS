@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from complex_numbers import ComplexNumber, complex_number_add, complex_number_multiply
 
+zero = ComplexNumber(0, 0)
+
 
 class ComplexMatrix:
     _matrix: list[list[ComplexNumber]]
@@ -104,6 +106,17 @@ class ComplexMatrix:
                 for row in self._matrix
             ]
         )
+
+    def is_diagonal(self) -> bool:
+        if not self.is_square():
+            return False
+
+        for i, row in enumerate(self._matrix):
+            for j, c in enumerate(row):
+                if i != j and c != zero:
+                    return False
+
+        return True
 
 
 def complex_matrix_add(m1: ComplexMatrix, m2: ComplexMatrix) -> ComplexMatrix:
