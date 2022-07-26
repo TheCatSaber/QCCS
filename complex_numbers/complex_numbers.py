@@ -85,3 +85,7 @@ class ComplexNumber:
 
     def is_non_negative_integer(self) -> bool:
         return self.is_non_negative_real() and self.is_integer()
+
+    def square_root(self) -> ComplexNumber:
+        r, theta = self.to_polar()
+        return self.new_from_polar(math.sqrt(r), theta / 2)

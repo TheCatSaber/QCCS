@@ -13,6 +13,7 @@ minus_point_two = ComplexNumber(-0.2, 0)
 zero = ComplexNumber(0, 0)
 one = ComplexNumber(1, 0)
 point_two = ComplexNumber(0.2, 0)
+square_root_two_by_two = 1 / math.sqrt(2)
 
 
 class ComplexNumberInitCheck(unittest.TestCase):
@@ -258,6 +259,28 @@ class ComplexNumberNonNegativeIntegerCheck(unittest.TestCase):
 
     def test_is_non_negative_integer_false_negative(self):
         self.assertFalse(ComplexNumber(-2, 0).is_non_negative_integer())
+
+
+class ComplexNumberSquareRoot(unittest.TestCase):
+    def test_reals(self):
+        numbers = [0, 1, 4, 5, 2.5, 6]
+        for number in numbers:
+            self.assertEqual(
+                ComplexNumber(math.sqrt(number), 0),
+                ComplexNumber(number, 0).square_root(),
+            )
+
+    def test_i(self):
+        self.assertEqual(
+            ComplexNumber(square_root_two_by_two, square_root_two_by_two),
+            ComplexNumber(0, 1).square_root(),
+        )
+
+    def test_minus_i(self):
+        self.assertEqual(
+            ComplexNumber(square_root_two_by_two, -square_root_two_by_two),
+            ComplexNumber(0, -1).square_root(),
+        )
 
 
 if __name__ == "__main__":
