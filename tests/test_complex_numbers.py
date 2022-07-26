@@ -11,6 +11,7 @@ from context import (
 
 minus_point_two = ComplexNumber(-0.2, 0)
 zero = ComplexNumber(0, 0)
+one = ComplexNumber(1, 0)
 point_two = ComplexNumber(0.2, 0)
 
 
@@ -151,6 +152,12 @@ class ComplexNumberPolarFormCheck(unittest.TestCase):
 
     def test_to_polar(self):
         self.assertEqual(self.one_one.to_polar(), self.sqrt_2_pi_by_4)
+
+    def test_to_polar_one(self):
+        self.assertEqual(one.to_polar(), (1, 0))
+
+    def test_to_polar_i(self):
+        self.assertEqual(ComplexNumber(0, 1).to_polar(), (1, math.pi / 2))
 
     def _from_polar_setup(self):
         return ComplexNumber.new_from_polar(*self.sqrt_2_pi_by_4)

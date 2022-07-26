@@ -58,7 +58,7 @@ class ComplexNumber:
 
     def to_polar(self) -> tuple[float, float]:
         r = self.modulus()
-        theta = math.atan2(self._re, self._im)
+        theta = math.atan2(self._im, self._re)
         return r, theta
 
     @staticmethod
