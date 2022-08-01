@@ -4,7 +4,12 @@ from complex_matrices import ComplexMatrix, complex_matrix_multiply
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 from marble_game import ProbabilisticMarbleGame
-from user_interaction_shared import get_float, get_positive_int
+from user_interaction_shared import (
+    get_float,
+    get_positive_int,
+    print_matrix,
+    print_vector,
+)
 
 zero = ComplexNumber(0, 0)
 one = ComplexNumber(1, 0)
@@ -151,20 +156,6 @@ def print_information_to_user(
     print_vector(state_after_one_iteration)
     print("State after two iterations, if bullet starts at the start: ")
     print_vector(state_after_two_iterations)
-
-
-def print_matrix(m: ComplexMatrix) -> None:
-    for row_number in range(m.get_height()):
-        print("[", end="")
-        print(*m.get_row(row_number), sep=", \t", end="")
-        print("],")
-
-
-def print_vector(v: ComplexVector) -> None:
-    print("[")
-    for e in v:
-        print(f"\t{e},")
-    print("]")
 
 
 if __name__ == "__main__":

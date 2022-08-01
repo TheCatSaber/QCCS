@@ -1,6 +1,8 @@
 from typing import Callable
 
+from complex_matrices import ComplexMatrix
 from complex_numbers import ComplexNumber
+from complex_vectors import ComplexVector
 
 
 def get_positive_int(question: str) -> int:
@@ -41,3 +43,37 @@ def less_than(f: Callable[[str], int], limit: float):
 
 def rounded_complex_number(c: ComplexNumber, digits: int = 8):
     return ComplexNumber(round(c.get_real(), digits), round(c.get_imaginary(), digits))
+
+
+def print_matrix(m: ComplexMatrix) -> None:
+    for row_number in range(m.get_height()):
+        print("[", end="")
+        print(*m.get_row(row_number), sep=", \t", end="")
+        print("],")
+
+
+def print_vector(v: ComplexVector) -> None:
+    print("[")
+    for e in v:
+        print(f"\t{e},")
+    print("]")
+
+
+def get_complex_vector(n: int) -> ComplexVector:
+    """Gets a complex vector of size n from the user."""
+    return ComplexVector(
+        [
+            ComplexNumber(
+                get_float(f"Enter real part of the amplitude for x{i}: "),
+                get_float(f"Enter imaginary part of the amplitude for x{i}: "),
+            )
+            for i in range(n)
+        ]
+    )
+
+
+SIZE_LIMIT = 100
+
+get_reasonable_positive_int: Callable[[str], int] = less_than(
+    get_positive_int, SIZE_LIMIT
+)
