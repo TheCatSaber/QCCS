@@ -1,12 +1,23 @@
+import math
+
 from complex_matrices import (
     ComplexMatrix,
     complex_matrix_add,
     complex_matrix_multiply,
     identity,
 )
-from complex_numbers import ComplexNumber, complex_number_divide
+from complex_numbers import (
+    ComplexNumber,
+    complex_number_add,
+    complex_number_divide,
+    complex_number_multiply,
+)
 from complex_vectors import ComplexVector, complex_vector_inner_product
-from shared import complex_matrix_vector_multiply
+from shared import (
+    complex_matrix_eigenvalues,
+    complex_matrix_eigenvectors,
+    complex_matrix_vector_multiply,
+)
 
 
 def state_probability(ket: ComplexVector, node: int) -> float:
@@ -52,3 +63,40 @@ def observable_variance(matrix: ComplexMatrix, ket: ComplexVector) -> ComplexNum
     # Delta_squared = (X -m)^2
     # So do E(Delta_squared), with respect to ket.
     return observable_mean(Delta_squared, ket)
+
+
+def probability_of_each_eigenstate(
+    matrix: ComplexMatrix, ket: ComplexVector
+) -> list[float]:
+    eigenvalues = complex_matrix_eigenvalues(matrix)
+    eigenvectors = complex_matrix_eigenvectors(matrix)
+    normalized_eigenvectors: list[ComplexVector] = []
+    for v in eigenvectors:
+        new: list[ComplexNumber] = []
+        norm = ComplexNumber(v.norm(), 0)
+        for c in v:
+            new.append(complex_number_divide(c, norm))
+        normalized_eigenvectors.append(ComplexVector(new))
+
+    for lambda_, v in zip(eigenvalues, normalized_eigenvectors):
+        assert complex_matrix_vector_multiply(matrix, v) == v.scalar_multiplication(
+            lambda_
+        )
+
+    probabilities: list[float] = []
+    for v in normalized_eigenvectors:
+        p = complex_vector_inner_product(v, ket).modulus_squared()
+        probabilities.append(p)
+
+    assert math.isclose(sum(probabilities), 1, abs_tol=1e-8)
+
+    mean_this_way = ComplexNumber(0, 0)
+
+    for lambda_, p in zip(eigenvalues, probabilities):
+        mean_this_way = complex_number_add(
+            mean_this_way, complex_number_multiply(lambda_, ComplexNumber(p, 0))
+        )
+
+    assert observable_mean(matrix, ket) == mean_this_way
+
+    return probabilities
