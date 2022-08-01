@@ -7,7 +7,12 @@ from context import (
     complex_vector_add,
     complex_vector_distance,
     complex_vector_inner_product,
+    complex_vector_tensor_product,
 )
+
+zero = ComplexNumber(0, 0)
+one = ComplexNumber(1, 0)
+two = ComplexNumber(2, 0)
 
 zero_vector = ComplexVector([ComplexNumber(0, 0)])
 v1 = ComplexVector([ComplexNumber(1, 1)])
@@ -202,13 +207,57 @@ class ComplexVectorDistanceCheck(unittest.TestCase):
         )
 
     def test_distance_in_r_cubed(self):
-        two = ComplexNumber(2, 0)
         self.assertEqual(
             complex_vector_distance(
                 ComplexVector([ComplexNumber(3, 0), ComplexNumber(1, 0), two]),
                 ComplexVector([two, two, ComplexNumber(-1, 0)]),
             ),
             math.sqrt(11),
+        )
+
+
+class ComplexVectorTensorProductCheck(unittest.TestCase):
+    def test_two_three(self):
+        self.assertEqual(
+            complex_vector_tensor_product(
+                ComplexVector([one, zero]),
+                ComplexVector(
+                    [ComplexNumber(0, 1), ComplexNumber(2, 3), ComplexNumber(3, 4)]
+                ),
+            ),
+            ComplexVector(
+                [
+                    ComplexNumber(0, 1),
+                    ComplexNumber(2, 3),
+                    ComplexNumber(3, 4),
+                    zero,
+                    zero,
+                    zero,
+                ]
+            ),
+        )
+
+    def test_more_complex_tensor(self):
+        self.assertEqual(
+            complex_vector_tensor_product(
+                ComplexVector([one, ComplexNumber(0, 1), ComplexNumber(5, 0)]),
+                ComplexVector(
+                    [
+                        two,
+                        ComplexNumber(-1, -1),
+                    ]
+                ),
+            ),
+            ComplexVector(
+                [
+                    two,
+                    ComplexNumber(-1, -1),
+                    ComplexNumber(0, 2),
+                    ComplexNumber(1, -1),
+                    ComplexNumber(10, 0),
+                    ComplexNumber(-5, -5),
+                ]
+            ),
         )
 
 
