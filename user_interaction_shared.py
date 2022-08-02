@@ -59,17 +59,78 @@ def print_vector(v: ComplexVector) -> None:
     print("]")
 
 
-def get_complex_vector(n: int) -> ComplexVector:
+def get_complex_vector(
+    n: int, message: str = "part of the amplitude for vector"
+) -> ComplexVector:
     """Gets a complex vector of size n from the user."""
     return ComplexVector(
         [
             ComplexNumber(
-                get_float(f"Enter real part of the amplitude for x{i}: "),
-                get_float(f"Enter imaginary part of the amplitude for x{i}: "),
+                get_float(f"Enter real {message} {i}: "),
+                get_float(f"Enter imaginary {message} {i}: "),
             )
             for i in range(n)
         ]
     )
+
+
+def get_complex_matrix(
+    width: int, height: int, message: str = "part of the amplitude for"
+) -> ComplexMatrix:
+    matrix: list[list[ComplexNumber]] = []
+    for row_number in range(height):
+        row: list[ComplexNumber] = [
+            ComplexNumber(
+                get_float(
+                    f"Enter real {message} row {row_number} column {column_number}: "
+                ),
+                get_float(
+                    f"Enter imaginary {message} row {row_number} column {column_number}: "
+                ),
+            )
+            for column_number in range(width)
+        ]
+        matrix.append(row)
+    return ComplexMatrix(matrix)
+
+
+def yes_no_question(question: str) -> bool:
+    while True:
+        user_input = input(question)
+        if user_input.lower() in ["y", "yes"]:
+            return True
+        elif user_input.lower() in ["n", "no"]:
+            return False
+
+
+def get_sequence_of_unitary_matrices(
+    number: int,
+    size: int,
+    message: str = "Getting unitary matrix number",
+    get_matrix_message: str = "part of the amplitude for",
+) -> list[ComplexMatrix]:
+    """message should allow for a space, the number of the matrix and a full stop at the end.
+
+    Example is the default: "Getting unitary matrix number"
+
+    get_matrix_message is the message passed to get_complex_matrix
+
+    Example is the default: "part of the amplitude for"
+
+    """
+    matrices: list[ComplexMatrix] = []
+
+    for i in range(number):
+        while True:
+            print(f"\n{message} {i}.")
+            matrix = get_complex_matrix(size, size, get_matrix_message)
+            if not matrix.is_unitary():
+                print("You did not enter a unitary matrix. Please try again:")
+            else:
+                matrices.append(matrix)
+                break
+
+    return matrices
 
 
 SIZE_LIMIT = 100
