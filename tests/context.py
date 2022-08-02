@@ -9,5 +9,6 @@ from complex_matrices import *  # type: ignore
 from complex_numbers import *  # type: ignore
 from complex_vectors import *  # type: ignore
 from marble_game import *  # type: ignore
+from myqasm import *  # type: ignore
 from quantum_systems import *  # type: ignore
 from shared import *  # type: ignore
