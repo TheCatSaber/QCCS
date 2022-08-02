@@ -8,9 +8,9 @@ from shared import complex_matrix_vector_multiply
 from user_interaction_shared import (
     get_complex_vector,
     get_reasonable_positive_int,
+    get_sequence_of_unitary_matrices,
     print_vector,
     yes_no_question,
-    get_sequence_of_unitary_matrices,
 )
 
 
@@ -121,10 +121,7 @@ def get_sequence_of_matrices(
         return [
             reduce(
                 tensor_product,
-                [
-                    line_matrices[time_step]
-                    for time_step in range(time_steps)
-                ],
+                [line_matrices[time_step] for time_step in range(time_steps)],
             )
             for line_matrices in line_matrices_list
         ]

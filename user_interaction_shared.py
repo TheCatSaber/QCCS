@@ -85,7 +85,8 @@ def get_complex_matrix(
                     f"Enter real {message} row {row_number} column {column_number}: "
                 ),
                 get_float(
-                    f"Enter imaginary {message} row {row_number} column {column_number}: "
+                    f"Enter imaginary {message} row {row_number} column"
+                    f" {column_number}: "
                 ),
             )
             for column_number in range(width)
