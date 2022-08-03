@@ -27,20 +27,19 @@ class ComplexNumber:
 
         im_str = handle_int_str(self._im)
 
-        if im_str == "0":
-            return re_str
-        if re_str == "0":
-            if im_str == "1":
+        match (self._re, self._im):
+            case (_, 0):
+                return re_str
+            case (0, 1):
                 return "i"
-            elif im_str == "-1":
+            case (0, -1):
                 return "-i"
-            else:
+            case (0, _):
                 return im_str + "i"
-        sign = "+"
-        if self._im < 0:
-            sign = "-"
-        im_str = im_str.replace("-", "")
-        return f"{re_str} {sign} {im_str}i"
+            case _:
+                sign = "-" if self._im < 0 else "+"
+                im_str = im_str.replace("-", "")
+                return f"{re_str} {sign} {im_str}i"
 
     def __eq__(self, other: object) -> bool:
         if type(other) != type(self):
