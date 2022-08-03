@@ -43,7 +43,7 @@ class ComplexNumber:
 
     def __eq__(self, other: object) -> bool:
         if type(other) in [int, float]:
-            return math.isclose(self._im, 0, abs_tol=1e-8) and math.isclose(self._re, other, abs_tol=1e-8) # type: ignore
+            return math.isclose(self._im, 0, abs_tol=1e-8) and math.isclose(self._re, other, abs_tol=1e-8)  # type: ignore
 
         if type(other) != type(self):
             return False
