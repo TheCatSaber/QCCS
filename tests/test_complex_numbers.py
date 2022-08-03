@@ -120,7 +120,7 @@ class ComplexNumberMultiplyCheck(unittest.TestCase):
     def test_multiply_i_i(self):
         self.assertEqual(
             complex_number_multiply(ComplexNumber(0, 1), ComplexNumber(0, 1)),
-            ComplexNumber(-1, 0),
+            -1
         )
 
 
@@ -156,7 +156,7 @@ class ComplexNumberConjugateCheck(unittest.TestCase):
         self.assertEqual(ComplexNumber(1, -2).conjugate(), ComplexNumber(1, 2))
 
     def test_conjugate_zero(self):
-        self.assertEqual(ComplexNumber(2, 0).conjugate(), ComplexNumber(2, 0))
+        self.assertEqual(ComplexNumber(2, 0).conjugate(), 2)
 
 
 class ComplexNumberPolarFormCheck(unittest.TestCase):
@@ -188,8 +188,7 @@ class ComplexNumberPolarFormCheck(unittest.TestCase):
 
 class ComplexNumberInverseCheck(unittest.TestCase):
     def test_zero(self):
-        zero_zero = ComplexNumber(0, 0)
-        self.assertEqual(zero_zero, zero_zero.inverse())
+        self.assertEqual(0, ComplexNumber(0, 0).inverse())
 
     def test_one_one(self):
         self.assertEqual(ComplexNumber(-1, -1), ComplexNumber(1, 1).inverse())
@@ -278,7 +277,7 @@ class ComplexNumberSquareRoot(unittest.TestCase):
         numbers = [0, 1, 4, 5, 2.5, 6]
         for number in numbers:
             self.assertEqual(
-                ComplexNumber(math.sqrt(number), 0),
+                math.sqrt(number),
                 ComplexNumber(number, 0).square_root(),
             )
 
