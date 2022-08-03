@@ -18,7 +18,7 @@ class ComplexVector:
         return len(self._vector)
 
     def __eq__(self, other: object) -> bool:
-        if type(other) != type(self):
+        if type(other) not in [type(self), list]:
             return False
         if len(self) != len(other):  # type: ignore
             return False

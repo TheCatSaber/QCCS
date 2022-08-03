@@ -47,20 +47,36 @@ class ComplexVectorSizeCheck(unittest.TestCase):
 
 class ComplexVectorEqualityCheck(unittest.TestCase):
     def test_equal_wrong_type(self):
-        self.assertEqual(False, v1 == "a")
+        self.assertFalse(v1 == "a")
 
     def test_equal_different_lengths(self):
-        self.assertEqual(False, v1 == v2)
+        self.assertFalse(v1 == v2)
 
     def test_equal_single_different_item(self):
-        self.assertEqual(False, v1 == ComplexVector([ComplexNumber(1, 2)]))
+        self.assertFalse(v1 == ComplexVector([ComplexNumber(1, 2)]))
 
     def test_equal_single_same_item(self):
         # Create new ComplexVector, to prove not checking same object.
-        self.assertEqual(True, v1 == ComplexVector([ComplexNumber(1, 1)]))
+        self.assertTrue(v1 == ComplexVector([ComplexNumber(1, 1)]))
 
     def test_equal_same_object(self):
-        self.assertEqual(True, v2 == v2)
+        self.assertTrue(v2 == v2)
+
+    def test_equality_with_list(self):
+        self.assertTrue(v2 == [ComplexNumber(2, 1), ComplexNumber(1, 1)])
+
+    def test_equality_with_list_with_real_numbers(self):
+        self.assertTrue(
+            ComplexVector([ComplexNumber(2.1, 0), ComplexNumber(1, 0)]) == [2.1, 1]
+        )
+
+    def test_non_equality_with_list(self):
+        self.assertFalse(v2 == [ComplexNumber(3, 1), ComplexNumber(1, 1)])
+
+    def test_non_equality_with_list_with_reals(self):
+        self.assertFalse(
+            ComplexVector([ComplexNumber(2.1, 0), ComplexNumber(2, 0)]) == [2.1, 1]
+        )
 
 
 class ComplexVectorAdditionCheck(unittest.TestCase):
