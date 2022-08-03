@@ -75,8 +75,20 @@ class ComplexNumber__eq__Check(unittest.TestCase):
     def test___eq___not_same_both(self):
         self.assertFalse(ComplexNumber(1, 1) == ComplexNumber(0, -1))
 
-    def test___eq___wrong_type(self):
+    def test___eq___real_number(self):
+        self.assertTrue(ComplexNumber(1, 0) == 1)
+    
+    def test___eq___floating_negative_number(self):
+        self.assertTrue(ComplexNumber(1.1, 0) == 1.1)
+    
+    def test___eq___not_equal_real_number(self):
+        self.assertFalse(ComplexNumber(1, 0) == 2)
+    
+    def test___eq___with_real_non_zero_imaginary(self):
         self.assertFalse(ComplexNumber(1, 1) == 1)
+
+    def test___eq___wrong_type(self):
+        self.assertFalse(ComplexNumber(1, 1) == True)
 
     def test___eq___small_rounding_error(self):
         self.assertTrue(ComplexNumber(1, 0) == ComplexNumber(0.999999999, 0))

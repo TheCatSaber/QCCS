@@ -42,6 +42,9 @@ class ComplexNumber:
                 return f"{re_str} {sign} {im_str}i"
 
     def __eq__(self, other: object) -> bool:
+        if type(other) in [int, float]:
+            return math.isclose(self._im, 0, abs_tol=1e-8) and math.isclose(self._re, other, abs_tol=1e-8) # type: ignore
+
         if type(other) != type(self):
             return False
         return math.isclose(self.get_real(), other.get_real(), abs_tol=1e-8) and math.isclose(self.get_imaginary(), other.get_imaginary(), abs_tol=1e-8)  # type: ignore
