@@ -8,8 +8,11 @@ from complex_numbers import ComplexNumber, complex_number_multiply
 class ComplexVector:
     _vector: list[ComplexNumber]
 
-    def __init__(self, complex_values: list[ComplexNumber]) -> None:
-        self._vector = complex_values
+    def __init__(self, complex_values: list[ComplexNumber | float | int]) -> None:
+        for i, c in enumerate(complex_values):
+            if type(c) in [float, int]:
+                complex_values[i] = ComplexNumber(c, 0)  # type: ignore
+        self._vector = complex_values  # type: ignore
 
     def __getitem__(self, n: int) -> ComplexNumber:
         return self._vector[n]

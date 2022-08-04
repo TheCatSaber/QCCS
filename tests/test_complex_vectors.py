@@ -14,12 +14,12 @@ zero = ComplexNumber(0, 0)
 one = ComplexNumber(1, 0)
 two = ComplexNumber(2, 0)
 
-zero_vector = ComplexVector([ComplexNumber(0, 0)])
+zero_vector = ComplexVector([0])
 v1 = ComplexVector([ComplexNumber(1, 1)])
 v2 = ComplexVector([ComplexNumber(2, 1), ComplexNumber(1, 1)])
 v5 = ComplexVector(
     [
-        ComplexNumber(0, 0),
+        0,
         ComplexNumber(3, 1),
         ComplexNumber(2, -1),
         ComplexNumber(-1, 2),
@@ -32,12 +32,15 @@ class ComplexVectorGetItemCheck(unittest.TestCase):
     def test_access_elements(self):
         self.assertEqual(ComplexNumber(1, 1), v2[1])
 
+    def test_access_elements_from_real(self):
+        self.assertEqual(ComplexVector([1.1, 2])[0], ComplexNumber(1.1, 0))
+
     def test_invalid_index_high(self):
         with self.assertRaises(IndexError):
             v2[2]
 
     def test_negative_index(self):
-        self.assertEqual(ComplexNumber(1, 1), v2[-1])
+        self.assertEqual(v2[-1], ComplexNumber(1, 1))
 
 
 class ComplexVectorSizeCheck(unittest.TestCase):
@@ -74,19 +77,15 @@ class ComplexVectorEqualityCheck(unittest.TestCase):
         self.assertFalse(v2 == [ComplexNumber(3, 1), ComplexNumber(1, 1)])
 
     def test_non_equality_with_list_with_reals(self):
-        self.assertFalse(
-            ComplexVector([ComplexNumber(2.1, 0), ComplexNumber(2, 0)]) == [2.1, 1]
-        )
+        self.assertFalse(ComplexVector([2.1, 2]) == [2.1, 1])
 
 
 class ComplexVectorAdditionCheck(unittest.TestCase):
     def test_add_zero_vector(self):
-        self.assertEqual(v1, complex_vector_add(v1, zero_vector))
+        self.assertEqual(complex_vector_add(v1, zero_vector), v1)
 
     def test_add_v1_to_itself(self):
-        self.assertEqual(
-            ComplexVector([ComplexNumber(2, 2)]), complex_vector_add(v1, v1)
-        )
+        self.assertEqual(complex_vector_add(v1, v1), [ComplexNumber(2, 2)])
 
     def test_different_lengths_error(self):
         self.assertRaises(ValueError, complex_vector_add, v1, v2)
@@ -94,24 +93,21 @@ class ComplexVectorAdditionCheck(unittest.TestCase):
 
 class ComplexVectorInverseCheck(unittest.TestCase):
     def test_zero_vector(self):
-        self.assertEqual(zero_vector, zero_vector.inverse())
+        self.assertEqual(zero_vector.inverse(), zero_vector)
 
     def test_v1(self):
-        self.assertEqual(ComplexVector([ComplexNumber(-1, -1)]), v1.inverse())
+        self.assertEqual(v1.inverse(), [ComplexNumber(-1, -1)])
 
     def test_5_element(self):
-
         self.assertEqual(
-            ComplexVector(
-                [
-                    ComplexNumber(0, 0),
-                    ComplexNumber(-3, -1),
-                    ComplexNumber(-2, 1),
-                    ComplexNumber(1, -2),
-                    ComplexNumber(5, 10),
-                ],
-            ),
             v5.inverse(),
+            [
+                0,
+                ComplexNumber(-3, -1),
+                ComplexNumber(-2, 1),
+                ComplexNumber(1, -2),
+                ComplexNumber(5, 10),
+            ],
         )
 
 
@@ -125,7 +121,7 @@ class ComplexVectorScalarMultiplicationCheck(unittest.TestCase):
         self.assertEqual(
             ComplexVector(
                 [
-                    ComplexNumber(0, 0),
+                    0,
                     ComplexNumber(7, 9),
                     ComplexNumber(8, 1),
                     ComplexNumber(-7, 4),
@@ -141,9 +137,7 @@ class ComplexVectorInnerProductCheck(unittest.TestCase):
         self.assertRaises(ValueError, complex_vector_inner_product, v1, v2)
 
     def test_inner_product_zero_vector(self):
-        self.assertEqual(
-            complex_vector_inner_product(zero_vector, zero_vector), ComplexNumber(0, 0)
-        )
+        self.assertEqual(complex_vector_inner_product(zero_vector, zero_vector), 0)
 
     def test_inner_product_length_5_vectors(self):
         self.assertEqual(
@@ -155,7 +149,7 @@ class ComplexVectorInnerProductCheck(unittest.TestCase):
                         ComplexNumber(1, -1),
                         ComplexNumber(2, 4),
                         ComplexNumber(2.5, 3),
-                        ComplexNumber(1, 0),
+                        1,
                     ]
                 ),
             ),
@@ -169,9 +163,7 @@ class ComplexVectorNormCheck(unittest.TestCase):
 
     def test_three_d_real_vector(self):
         self.assertEqual(
-            ComplexVector(
-                [ComplexNumber(3, 0), ComplexNumber(-6, 0), ComplexNumber(2, 0)]
-            ).norm(),
+            ComplexVector([3, -6, 2]).norm(),
             7,
         )
 
@@ -195,9 +187,7 @@ class ComplexVectorNormSquaredCheck(unittest.TestCase):
 
     def test_three_d_real_vector(self):
         self.assertEqual(
-            ComplexVector(
-                [ComplexNumber(3, 0), ComplexNumber(-6, 0), ComplexNumber(2, 0)]
-            ).norm_squared(),
+            ComplexVector([3, -6, 2]).norm_squared(),
             49,
         )
 
@@ -225,8 +215,8 @@ class ComplexVectorDistanceCheck(unittest.TestCase):
     def test_distance_in_r_cubed(self):
         self.assertEqual(
             complex_vector_distance(
-                ComplexVector([ComplexNumber(3, 0), ComplexNumber(1, 0), two]),
-                ComplexVector([two, two, ComplexNumber(-1, 0)]),
+                ComplexVector([3, 1, 2]),
+                ComplexVector([2, 2, -1]),
             ),
             math.sqrt(11),
         )
@@ -236,7 +226,7 @@ class ComplexVectorTensorProductCheck(unittest.TestCase):
     def test_two_three(self):
         self.assertEqual(
             complex_vector_tensor_product(
-                ComplexVector([one, zero]),
+                ComplexVector([1, 0]),
                 ComplexVector(
                     [ComplexNumber(0, 1), ComplexNumber(2, 3), ComplexNumber(3, 4)]
                 ),
@@ -246,9 +236,9 @@ class ComplexVectorTensorProductCheck(unittest.TestCase):
                     ComplexNumber(0, 1),
                     ComplexNumber(2, 3),
                     ComplexNumber(3, 4),
-                    zero,
-                    zero,
-                    zero,
+                    0,
+                    0,
+                    0,
                 ]
             ),
         )
@@ -256,24 +246,22 @@ class ComplexVectorTensorProductCheck(unittest.TestCase):
     def test_more_complex_tensor(self):
         self.assertEqual(
             complex_vector_tensor_product(
-                ComplexVector([one, ComplexNumber(0, 1), ComplexNumber(5, 0)]),
+                ComplexVector([1, ComplexNumber(0, 1), 5]),
                 ComplexVector(
                     [
-                        two,
+                        2,
                         ComplexNumber(-1, -1),
                     ]
                 ),
             ),
-            ComplexVector(
-                [
-                    two,
-                    ComplexNumber(-1, -1),
-                    ComplexNumber(0, 2),
-                    ComplexNumber(1, -1),
-                    ComplexNumber(10, 0),
-                    ComplexNumber(-5, -5),
-                ]
-            ),
+            [
+                2,
+                ComplexNumber(-1, -1),
+                ComplexNumber(0, 2),
+                ComplexNumber(1, -1),
+                10,
+                ComplexNumber(-5, -5),
+            ],
         )
 
 
