@@ -19,7 +19,7 @@ def MYQASM(expression: str) -> Optional[list[int]]:
 
 
 def _valid_identifier(identifier: str) -> None:
-    if not all(char.isalnum() or char in "-_" for char in identifier):
+    if not all(char.isalnum() or char in "-_." for char in identifier):
         raise InvalidMYQASMSyntaxError("Invalid identifier name.")
 
 

@@ -45,10 +45,10 @@ class LexerCheck(unittest.TestCase):
 
     def test_select_lexing_normal(self):
         self.assertEqual(
-            MYQASM_lexer("SELECT S R 2 4"),
+            MYQASM_lexer("SELECT S-1 R 2 4"),
             [
                 (TokenNameEnum.KEYWORD, "SELECT"),
-                (TokenNameEnum.IDENTIFIER, "S"),
+                (TokenNameEnum.IDENTIFIER, "S-1"),
                 (TokenNameEnum.IDENTIFIER, "R"),
                 (TokenNameEnum.LITERAL, "2"),
                 (TokenNameEnum.LITERAL, "4"),
@@ -87,7 +87,7 @@ class LexerCheck(unittest.TestCase):
         )
 
     def test_measure_lexing_invalid(self):
-        self.assertRaises(InvalidMYQASMSyntaxError, MYQASM_lexer, "MEASURE R P")
+        self.assertRaises(InvalidMYQASMSyntaxError, MYQASM_lexer, "MEASURE R1 P")
         self.assertRaises(InvalidMYQASMSyntaxError, MYQASM_lexer, "MEASURE (")
 
     def test_initial_identifier_invalid(self):
@@ -98,11 +98,11 @@ class LexerCheck(unittest.TestCase):
 
     def test_concat_lexing_normal(self):
         self.assertEqual(
-            MYQASM_lexer("U CONCAT U1 U2"),
+            MYQASM_lexer("U CONCAT R0.5 U2"),
             [
                 (TokenNameEnum.IDENTIFIER, "U"),
                 (TokenNameEnum.KEYWORD, "CONCAT"),
-                (TokenNameEnum.IDENTIFIER, "U1"),
+                (TokenNameEnum.IDENTIFIER, "R0.5"),
                 (TokenNameEnum.IDENTIFIER, "U2"),
             ],
         )

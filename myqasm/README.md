@@ -26,7 +26,7 @@ This felt appropriate, since this is in a sense a declarative language.
 INITIALIZE name N
 ```
 
-where name is the identifier of the register containing the following characters only [A-Z][a-z][0-9][-][_], and N is the number of qubits in the register.
+where name is the identifier of the register containing the following characters only [A-Z][a-z][0-9][-][_][.], and N is the number of qubits in the register.
 
 or
 
