@@ -44,3 +44,33 @@ class ComplexVector:
 
     def norm_squared(self) -> float:
         return sum(c.modulus_squared() for c in self)
+
+    def __add__(self, other: object) -> ComplexVector:
+        if isinstance(other, ComplexVector):
+            # To tell type checking that I don't care what
+            # other is, since + will take care of this.
+            if len(self) != len(other):
+                raise ValueError("You can only add ComplexVectors of the same length.")
+            return ComplexVector([self[i] + other[i] for i in range(len(self))])
+        elif isinstance(other, list):
+            if not all(isinstance(c, ComplexNumber | int | float) for c in other):  # type: ignore
+                raise NotImplementedError
+            return self + ComplexVector(other)  # type: ignore
+        else:
+            raise NotImplementedError
+
+    def __radd__(self, other: object) -> ComplexVector:
+        return self + other
+
+    def __sub__(self, other: object) -> ComplexVector:
+        if isinstance(other, ComplexVector):
+            return self + other.inverse()
+        elif isinstance(other, list):
+            if not all(isinstance(c, ComplexNumber | int | float) for c in other):  # type: ignore
+                raise NotImplementedError
+            return self - ComplexVector(other)  # type: ignore
+        else:
+            raise NotImplementedError
+
+    def __rsub__(self, other: object) -> ComplexVector:
+        return self.inverse() + other

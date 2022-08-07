@@ -4,7 +4,6 @@ import unittest
 from context import (
     ComplexNumber,
     ComplexVector,
-    complex_vector_add,
     complex_vector_distance,
     complex_vector_inner_product,
     complex_vector_tensor_product,
@@ -26,6 +25,22 @@ v5 = ComplexVector(
         ComplexNumber(-5, -10),
     ],
 )
+
+v5_1 = [ComplexNumber(1, 1), ComplexNumber(2, 1), ComplexNumber(3, 2), 2, 1.1]
+v5_2 = [
+    ComplexNumber(2, 1),
+    2,
+    1.1,
+    ComplexNumber(3.4, 3),
+    ComplexNumber(3, 4),
+]
+v5_3 = [
+    ComplexNumber(3, 2),
+    ComplexNumber(4, 1),
+    ComplexNumber(4.1, 2),
+    ComplexNumber(5.4, 3),
+    ComplexNumber(4.1, 4),
+]
 
 
 class ComplexVectorGetItemCheck(unittest.TestCase):
@@ -81,14 +96,51 @@ class ComplexVectorEqualityCheck(unittest.TestCase):
 
 
 class ComplexVectorAdditionCheck(unittest.TestCase):
-    def test_add_zero_vector(self):
-        self.assertEqual(complex_vector_add(v1, zero_vector), v1)
+    def test___add___two_complex_vectors(self):
+        self.assertEqual(ComplexVector(v5_1) + ComplexVector(v5_2), v5_3)
 
-    def test_add_v1_to_itself(self):
-        self.assertEqual(complex_vector_add(v1, v1), [ComplexNumber(2, 2)])
+    def test___add___list(self):
+        self.assertEqual(ComplexVector(v5_1) + v5_2, v5_3)
+        self.assertEqual(v5_1 + ComplexVector(v5_2), v5_3)
 
-    def test_different_lengths_error(self):
-        self.assertRaises(ValueError, complex_vector_add, v1, v2)
+    def test___add___different_lengths_error(self):
+        with self.assertRaises(ValueError):
+            _ = v1 + v2
+
+    def test___add___wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = v1 + 1
+        with self.assertRaises(NotImplementedError):
+            _ = 1 + v1
+        with self.assertRaises(NotImplementedError):
+            _ = v1 + ["1"]
+        with self.assertRaises(NotImplementedError):
+            _ = ["1"] + v1
+
+
+class ComplexVectorSubtractCheck(unittest.TestCase):
+    def test___sub___two_complex_vectors(self):
+        self.assertEqual(ComplexVector(v5_3) - ComplexVector(v5_2), v5_1)
+
+    def test___sub___list(self):
+        self.assertEqual(ComplexVector(v5_3) - v5_2, v5_1)
+
+    def test___rsub___list(self):
+        self.assertEqual(v5_3 - ComplexVector(v5_2), v5_1)
+
+    def test___sub_wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = v1 - 1
+        with self.assertRaises(NotImplementedError):
+            _ = 1 - v1
+        with self.assertRaises(NotImplementedError):
+            _ = v1 - ["1"]
+        with self.assertRaises(NotImplementedError):
+            _ = ["1"] - v1
+
+    def test___add___different_lengths_error(self):
+        with self.assertRaises(ValueError):
+            _ = v1 - v2
 
 
 class ComplexVectorInverseCheck(unittest.TestCase):
