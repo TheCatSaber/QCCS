@@ -126,9 +126,7 @@ class MarbleGame:
             for value in movement_matrix.get_column(column_index):
                 column_sum += value
             if column_sum != 1:
-                raise ValueError(
-                    "Sum of each column must be 1 in movement matrix."
-                )
+                raise ValueError("Sum of each column must be 1 in movement matrix.")
 
     def calculate_state(self, iterations: int) -> ComplexVector:
         if iterations < 0:

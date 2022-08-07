@@ -81,8 +81,8 @@ class ComplexNumber__eq__Check(unittest.TestCase):
     def test___eq___with_real_non_zero_imaginary(self):
         self.assertFalse(ComplexNumber(1, 1) == 1)
 
-    def test___eq___wrong_type(self):
-        self.assertFalse(ComplexNumber(1, 1) == True)
+    def test___eq___with_string(self):
+        self.assertFalse(ComplexNumber(1, 2) == "str")
 
     def test___eq___small_rounding_error(self):
         self.assertTrue(ComplexNumber(1, 0) == ComplexNumber(0.999999999, 0))
@@ -92,6 +92,7 @@ class ComplexNumberAddCheck(unittest.TestCase):
     def test___add___wrong_type(self):
         with self.assertRaises(NotImplementedError):
             _ = ComplexNumber(1, 1) + "1"
+        with self.assertRaises(NotImplementedError):
             _ = "1" + ComplexNumber(1, 1)
 
     def test___add___real(self):
@@ -159,6 +160,7 @@ class ComplexNumberMultiplyCheck(unittest.TestCase):
     def test___mul___wrong_type(self):
         with self.assertRaises(NotImplementedError):
             _ = "1" * ComplexNumber(1, 1)
+        with self.assertRaises(NotImplementedError):
             _ = ComplexNumber(1, 1) * "1"
 
 
