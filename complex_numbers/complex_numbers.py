@@ -108,7 +108,7 @@ class ComplexNumber:
 
     def __sub__(self, other: object) -> ComplexNumber:
         if isinstance(other, ComplexNumber):
-            return ComplexNumber(self._re - other._re, self._im - other._im)
+            return self + other.inverse()
         elif isinstance(other, int | float):
             return ComplexNumber(self._re - other, self._im)
         else:
