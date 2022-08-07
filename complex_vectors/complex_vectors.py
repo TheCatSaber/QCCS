@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from typing import Sequence
 
 from complex_numbers import ComplexNumber, complex_number_multiply
 
@@ -8,11 +9,11 @@ from complex_numbers import ComplexNumber, complex_number_multiply
 class ComplexVector:
     _vector: list[ComplexNumber]
 
-    def __init__(self, complex_values: list[ComplexNumber | float | int]) -> None:
-        for i, c in enumerate(complex_values):
-            if type(c) in [float, int]:
-                complex_values[i] = ComplexNumber(c, 0)  # type: ignore
-        self._vector = complex_values  # type: ignore
+    def __init__(self, complex_values: Sequence[ComplexNumber | float | int]) -> None:
+        self._vector = [
+            ComplexNumber(c, 0) if isinstance(c, int) or isinstance(c, float) else c
+            for c in complex_values
+        ]
 
     def __getitem__(self, n: int) -> ComplexNumber:
         return self._vector[n]
@@ -21,7 +22,7 @@ class ComplexVector:
         return len(self._vector)
 
     def __eq__(self, other: object) -> bool:
-        if type(other) not in [type(self), list]:
+        if not isinstance(other, ComplexVector | list):
             return False
         if len(self) != len(other):  # type: ignore
             return False
