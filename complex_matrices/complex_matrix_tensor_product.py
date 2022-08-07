@@ -1,6 +1,6 @@
 from typing import Optional
 
-from complex_numbers import ComplexNumber, complex_number_multiply
+from complex_numbers import ComplexNumber
 
 from .complex_matrices import ComplexMatrix
 
@@ -24,6 +24,6 @@ def tensor_product(m1: ComplexMatrix, m2: ComplexMatrix) -> ComplexMatrix:
                 for column2_index, value2 in enumerate(row2):
                     new_matrix[row1_index * m2_height + row2_index][
                         column1_index * m2_width + column2_index
-                    ] = complex_number_multiply(value1, value2)
+                    ] = (value1 * value2)
 
     return ComplexMatrix(new_matrix)  # type: ignore

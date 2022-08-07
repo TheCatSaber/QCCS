@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from typing import Sequence
 
-from complex_numbers import ComplexNumber, complex_number_multiply
+from complex_numbers import ComplexNumber
 
 
 class ComplexVector:
@@ -37,7 +37,7 @@ class ComplexVector:
         return ComplexVector([c.inverse() for c in self._vector])
 
     def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexVector:
-        return ComplexVector([complex_number_multiply(c, scalar) for c in self._vector])
+        return ComplexVector([(c * scalar) for c in self._vector])
 
     def norm(self) -> float:
         return math.sqrt(self.norm_squared())

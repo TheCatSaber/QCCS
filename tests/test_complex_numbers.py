@@ -1,13 +1,7 @@
 import math
 import unittest
 
-from context import (
-    ComplexNumber,
-    complex_number_add,
-    complex_number_divide,
-    complex_number_multiply,
-    complex_number_subtract,
-)
+from context import ComplexNumber
 
 minus_point_two = ComplexNumber(-0.2, 0)
 zero = ComplexNumber(0, 0)
@@ -95,45 +89,111 @@ class ComplexNumber__eq__Check(unittest.TestCase):
 
 
 class ComplexNumberAddCheck(unittest.TestCase):
-    def test_add_positive(self):
+    def test___add___wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = ComplexNumber(1, 1) + "1"
+            _ = "1" + ComplexNumber(1, 1)
+
+    def test___add___real(self):
+        self.assertEqual(ComplexNumber(2, 1) + 1, ComplexNumber(3, 1))
+        self.assertEqual(1 + ComplexNumber(2, 1), ComplexNumber(3, 1))
+
+    def test___add___two_complex(self):
         self.assertEqual(
-            complex_number_add(ComplexNumber(1, 1), ComplexNumber(3, 2)),
+            ComplexNumber(1, 1) + ComplexNumber(3, 2),
             ComplexNumber(4, 3),
         )
+        self.assertEqual(ComplexNumber(3, 2) + ComplexNumber(1, 1), ComplexNumber(4, 3))
 
-    def test_add_negative_re(self):
-        self.assertEqual(
-            complex_number_add(ComplexNumber(1, 1), ComplexNumber(-2, 0)),
-            ComplexNumber(-1, 1),
-        )
+    def test___add___negative_real(self):
+        self.assertEqual(ComplexNumber(1, 1) + -2, ComplexNumber(-1, 1))
+        self.assertEqual(-2 + ComplexNumber(1, 1), ComplexNumber(-1, 1))
+
+    def test___add___float(self):
+        self.assertEqual(ComplexNumber(1, 2) + 1.5, ComplexNumber(2.5, 2))
+        self.assertEqual(1.5 + ComplexNumber(1, 2), ComplexNumber(2.5, 2))
 
 
 class ComplexNumberSubtractCheck(unittest.TestCase):
-    def test_subtract_positive(self):
+    def test___sub___two_complex(self):
         self.assertEqual(
-            complex_number_subtract(ComplexNumber(3, 3), ComplexNumber(3, 2)),
+            ComplexNumber(3, 3) - ComplexNumber(3, 2),
             ComplexNumber(0, 1),
         )
+
+    def test___sub___int(self):
+        self.assertEqual(ComplexNumber(1, 2) - 2, ComplexNumber(-1, 2))
+
+    def test___sub___float(self):
+        self.assertEqual(ComplexNumber(1, 3) - 2.5, ComplexNumber(-1.5, 3))
+
+    def test___rsub___int(self):
+        self.assertEqual(1 - ComplexNumber(3, 2), ComplexNumber(-2, -2))
+
+    def test___rsub___float(self):
+        self.assertEqual(1.4 - ComplexNumber(1, 1), ComplexNumber(0.4, -1))
+
+    def test___sub___wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = ComplexNumber(1, 1) - "1"
+
+    def test___rsub___wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = "1" - ComplexNumber(1, 1)
 
 
 class ComplexNumberMultiplyCheck(unittest.TestCase):
-    def test_multiply_i_i(self):
+    def test___mul___two_complex(self):
         self.assertEqual(
-            complex_number_multiply(ComplexNumber(0, 1), ComplexNumber(0, 1)), -1
+            (ComplexNumber(1, 1) * ComplexNumber(2, 1)), ComplexNumber(1, 3)
         )
+
+    def test___mul___int(self):
+        self.assertEqual(ComplexNumber(1.2, 4) * 2, ComplexNumber(2.4, 8))
+        self.assertEqual(2 * ComplexNumber(1.2, 4), ComplexNumber(2.4, 8))
+
+    def test___mul___float(self):
+        self.assertEqual(ComplexNumber(1.6, 4.4) * -2.5, ComplexNumber(-4, -11))
+        self.assertEqual(-2.5 * ComplexNumber(1.6, 4.4), ComplexNumber(-4, -11))
+
+    def test___mul___wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = "1" * ComplexNumber(1, 1)
+            _ = ComplexNumber(1, 1) * "1"
 
 
 class ComplexNumberDivideCheck(unittest.TestCase):
-    def test_divide_book_example(self):
+    def test___truediv___two_complex(self):
         self.assertEqual(
-            complex_number_divide(ComplexNumber(-2, 1), ComplexNumber(1, 2)),
+            (ComplexNumber(-2, 1) / ComplexNumber(1, 2)),
             ComplexNumber(0, 1),
         )
 
-    def test_throw_value_error(self):
-        self.assertRaises(
-            ValueError, complex_number_divide, ComplexNumber(-2, 1), ComplexNumber(0, 0)
-        )
+    def test___truediv___int(self):
+        self.assertEqual(ComplexNumber(3, 2) / 2, ComplexNumber(1.5, 1))
+
+    def test___truediv___float(self):
+        self.assertEqual(ComplexNumber(4.5, 3) / 1.5, ComplexNumber(3, 2))
+
+    def test___rtruediv___int(self):
+        self.assertEqual(1 / ComplexNumber(2, 4), ComplexNumber(0.1, -0.2))
+
+    def test___rtruediv___float(self):
+        self.assertEqual(1.5 / ComplexNumber(6, 8), ComplexNumber(0.09, -0.12))
+
+    def test___truediv___div_0(self):
+        with self.assertRaises(ZeroDivisionError):
+            _ = ComplexNumber(-2, 1) / ComplexNumber(0, 0)
+        with self.assertRaises(ZeroDivisionError):
+            _ = ComplexNumber(-2, 1) / 0
+
+    def test___truediv___wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = ComplexNumber(1, 1) / "1"
+
+    def test___rtruediv___wrong_type(self):
+        with self.assertRaises(NotImplementedError):
+            _ = "1" / ComplexNumber(1, 1)
 
 
 class ComplexNumberModulusCheck(unittest.TestCase):

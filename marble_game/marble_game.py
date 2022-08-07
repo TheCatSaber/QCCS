@@ -1,12 +1,11 @@
 import math
 
 from complex_matrices import ComplexMatrix
-from complex_numbers import ComplexNumber, complex_number_add
+from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 from shared import complex_matrix_vector_multiply
 
 zero = ComplexNumber(0, 0)
-one = ComplexNumber(1, 0)
 
 
 class MarbleGame:
@@ -82,7 +81,7 @@ class MarbleGame:
     ) -> None:
         total = zero
         for count in initial_state:
-            total = complex_number_add(total, count)
+            total += count
 
         if total.get_real() != marble_count:
             raise ValueError(
@@ -113,7 +112,7 @@ class MarbleGame:
     ) -> None:
         for i in range(nodes):
             if any(
-                not (element == zero or element == one)
+                not (element == 0 or element == 1)
                 for element in movement_matrix.get_row(i)
             ):
                 raise ValueError("All values in movement_matrix must be 0 or 1.")
@@ -125,10 +124,10 @@ class MarbleGame:
         for column_index in range(nodes):
             column_sum = zero
             for value in movement_matrix.get_column(column_index):
-                column_sum = complex_number_add(column_sum, value)
-            if column_sum != one:
+                column_sum += value
+            if column_sum != 1:
                 raise ValueError(
-                    "All columns in movement_matrix must have exactly one 1."
+                    "Sum of each column must be 1 in movement matrix."
                 )
 
     def calculate_state(self, iterations: int) -> ComplexVector:

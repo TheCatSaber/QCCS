@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from complex_numbers import ComplexNumber, complex_number_add, complex_number_multiply
+from complex_numbers import ComplexNumber
 
 zero = ComplexNumber(0, 0)
 
@@ -28,13 +28,16 @@ class ComplexMatrix:
                 )
         self._matrix = matrix
 
-    def __eq__(self, __o: object) -> bool:
-        if type(__o) != type(self):
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ComplexMatrix):
             return False
-        if self.get_width() != __o.get_width() or self.get_height() != __o.get_height():  # type: ignore
+        if (
+            self.get_width() != other.get_width()
+            or self.get_height() != other.get_height()
+        ):
             return False
         for row_index in range(self.get_height()):
-            if self.get_row(row_index) != __o.get_row(row_index):  # type: ignore
+            if self.get_row(row_index) != other.get_row(row_index):
                 return False
 
         return True
@@ -66,9 +69,7 @@ class ComplexMatrix:
     def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexMatrix:
         new_matrix: list[list[ComplexNumber]] = []
         for row_index in range(self.get_height()):
-            new_matrix.append(
-                [complex_number_multiply(i, scalar) for i in self.get_row(row_index)]
-            )
+            new_matrix.append([(i * scalar) for i in self.get_row(row_index)])
         return ComplexMatrix(new_matrix)
 
     def conjugate(self) -> ComplexMatrix:
@@ -127,10 +128,7 @@ def complex_matrix_add(m1: ComplexMatrix, m2: ComplexMatrix) -> ComplexMatrix:
     new_matrix: list[list[ComplexNumber]] = []
     for row_index in range(m1.get_height()):
         new_matrix.append(
-            [
-                complex_number_add(i1, i2)
-                for i1, i2 in zip(m1.get_row(row_index), m2.get_row(row_index))
-            ]
+            [i1 + i2 for i1, i2 in zip(m1.get_row(row_index), m2.get_row(row_index))]
         )
     return ComplexMatrix(new_matrix)
 
@@ -158,10 +156,7 @@ def complex_matrix_multiply(m1: ComplexMatrix, m2: ComplexMatrix) -> ComplexMatr
         for k in range(p):
             sum_ = ComplexNumber(0, 0)
             for h in range(n):
-                multiplication = complex_number_multiply(
-                    m1.get_row(j)[h], m2.get_row(h)[k]
-                )
-                sum_ = complex_number_add(sum_, multiplication)
+                sum_ += m1.get_row(j)[h] * m2.get_row(h)[k]
             new_row.append(sum_)
         new_matrix.append(new_row)
     return ComplexMatrix(new_matrix)

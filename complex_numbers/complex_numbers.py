@@ -19,7 +19,7 @@ class ComplexNumber:
 
     def __str__(self) -> str:
         def handle_int_str(value: float) -> str:
-            if type(value) == int or value.is_integer():
+            if isinstance(value, int) or value.is_integer():
                 return str(int(value))
             return str(value)
 
@@ -42,12 +42,15 @@ class ComplexNumber:
                 return f"{re_str} {sign} {im_str}i"
 
     def __eq__(self, other: object) -> bool:
-        if type(other) in [int, float]:
-            return math.isclose(self._im, 0, abs_tol=1e-8) and math.isclose(self._re, other, abs_tol=1e-8)  # type: ignore
+        if isinstance(other, int | float):
+            return self.is_real() and math.isclose(self._re, other, abs_tol=1e-8)
 
-        if type(other) != type(self):
+        if isinstance(other, ComplexNumber):
+            return math.isclose(self._re, other._re, abs_tol=1e-8) and math.isclose(
+                self._im, other._im, abs_tol=1e-8
+            )
+        else:
             return False
-        return math.isclose(self.get_real(), other.get_real(), abs_tol=1e-8) and math.isclose(self.get_imaginary(), other.get_imaginary(), abs_tol=1e-8)  # type: ignore
 
     def modulus(self) -> float:
         return math.sqrt(self.modulus_squared())
@@ -80,7 +83,7 @@ class ComplexNumber:
         return self._re >= 0 and self.is_real()
 
     def is_integer(self) -> bool:
-        return (type(self._re) == int or self._re.is_integer()) and self.is_real()
+        return (isinstance(self._re, int) or self._re.is_integer()) and self.is_real()
 
     def is_positive_integer(self) -> bool:
         return self.is_positive_real() and self.is_integer()
@@ -91,3 +94,56 @@ class ComplexNumber:
     def square_root(self) -> ComplexNumber:
         r, theta = self.to_polar()
         return self.new_from_polar(math.sqrt(r), theta / 2)
+
+    def __add__(self, other: object) -> ComplexNumber:
+        if isinstance(other, ComplexNumber):
+            return ComplexNumber(self._re + other._re, self._im + other._im)
+        elif isinstance(other, int | float):
+            return ComplexNumber(self._re + other, self._im)
+        else:
+            raise NotImplementedError
+
+    def __radd__(self, other: object) -> ComplexNumber:
+        return self + other
+
+    def __sub__(self, other: object) -> ComplexNumber:
+        if isinstance(other, ComplexNumber):
+            return ComplexNumber(self._re - other._re, self._im - other._im)
+        elif isinstance(other, int | float):
+            return ComplexNumber(self._re - other, self._im)
+        else:
+            raise NotImplementedError
+
+    def __rsub__(self, other: object) -> ComplexNumber:
+        if isinstance(other, ComplexNumber | int | float):
+            return other + self.inverse()
+        else:
+            raise NotImplementedError
+
+    def __mul__(self, other: object) -> ComplexNumber:
+        if isinstance(other, int | float):
+            return ComplexNumber(self._re * other, self._im * other)
+        elif isinstance(other, ComplexNumber):
+            new_real: float = (self._re * other._re) - (self._im * other._im)
+            new_imaginary: float = (self._im * other._re) + (self._re * other._im)
+            return ComplexNumber(new_real, new_imaginary)
+        else:
+            raise NotImplementedError
+
+    def __rmul__(self, other: object) -> ComplexNumber:
+        return self * other
+
+    def __truediv__(self, other: object) -> ComplexNumber:
+        if isinstance(other, int | float):
+            return ComplexNumber(self._re / other, self._im / other)
+        if not isinstance(other, ComplexNumber):
+            raise NotImplementedError
+        modulus_squared = other.modulus_squared()
+        return (self * other.conjugate()) / modulus_squared
+
+    def __rtruediv__(self, other: object) -> ComplexNumber:
+        if isinstance(other, int | float):
+            return (other * self.conjugate()) / self.modulus_squared()
+        # other should never ComplexNumber
+        else:
+            raise NotImplementedError

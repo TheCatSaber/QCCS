@@ -6,12 +6,7 @@ from complex_matrices import (
     complex_matrix_multiply,
     identity,
 )
-from complex_numbers import (
-    ComplexNumber,
-    complex_number_add,
-    complex_number_divide,
-    complex_number_multiply,
-)
+from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector, complex_vector_inner_product
 from shared import (
     complex_matrix_eigenvalues,
@@ -34,7 +29,7 @@ def transition_amplitude(ket1: ComplexVector, ket2: ComplexVector) -> ComplexNum
     inner_product = complex_vector_inner_product(ket2, ket1)
     norms_multiplied = ket1.norm() * ket2.norm()
     norms_multiplied_as_complex = ComplexNumber(norms_multiplied, 0)
-    return complex_number_divide(inner_product, norms_multiplied_as_complex)
+    return inner_product / norms_multiplied_as_complex
 
 
 def observable_mean(matrix: ComplexMatrix, ket: ComplexVector) -> ComplexNumber:
@@ -71,21 +66,19 @@ def probability_of_each_eigenstate(
     eigenvalues = complex_matrix_eigenvalues(matrix)
     eigenvectors = complex_matrix_eigenvectors(matrix)
     normalized_eigenvectors: list[ComplexVector] = []
-    for v in eigenvectors:
-        new: list[ComplexNumber] = []
-        norm = ComplexNumber(v.norm(), 0)
-        for c in v:
-            new.append(complex_number_divide(c, norm))
-        normalized_eigenvectors.append(ComplexVector(new))
+    for eigenvector in eigenvectors:
+        norm = eigenvector.norm()
+        normalized_eigenvector = [c / norm for c in eigenvector]
+        normalized_eigenvectors.append(ComplexVector(normalized_eigenvector))
 
-    for lambda_, v in zip(eigenvalues, normalized_eigenvectors):
-        assert complex_matrix_vector_multiply(matrix, v) == v.scalar_multiplication(
+    for lambda_, eigenvector in zip(eigenvalues, normalized_eigenvectors):
+        assert complex_matrix_vector_multiply(matrix, eigenvector) == eigenvector.scalar_multiplication(
             lambda_
         )
 
     probabilities: list[float] = []
-    for v in normalized_eigenvectors:
-        p = complex_vector_inner_product(v, ket).modulus_squared()
+    for eigenvector in normalized_eigenvectors:
+        p = complex_vector_inner_product(eigenvector, ket).modulus_squared()
         probabilities.append(p)
 
     assert math.isclose(sum(probabilities), 1, abs_tol=1e-8)
@@ -93,9 +86,7 @@ def probability_of_each_eigenstate(
     mean_this_way = ComplexNumber(0, 0)
 
     for lambda_, p in zip(eigenvalues, probabilities):
-        mean_this_way = complex_number_add(
-            mean_this_way, complex_number_multiply(lambda_, ComplexNumber(p, 0))
-        )
+        mean_this_way += lambda_ * p
 
     assert observable_mean(matrix, ket) == mean_this_way
 

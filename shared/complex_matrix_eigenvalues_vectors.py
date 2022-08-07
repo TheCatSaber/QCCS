@@ -1,18 +1,9 @@
 from complex_matrices import ComplexMatrix, complex_matrix_add, identity
-from complex_numbers import (
-    ComplexNumber,
-    complex_number_add,
-    complex_number_subtract,
-    complex_number_multiply,
-    complex_number_divide,
-)
+from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 
-minus_one = ComplexNumber(-1, 0)
 zero = ComplexNumber(0, 0)
 one = ComplexNumber(1, 0)
-two = ComplexNumber(2, 0)
-four = ComplexNumber(4, 0)
 
 
 def complex_matrix_eigenvalues(m: ComplexMatrix) -> list[ComplexNumber]:
@@ -38,18 +29,11 @@ def complex_matrix_eigenvalues(m: ComplexMatrix) -> list[ComplexNumber]:
     b = m.get_row(0)[1]
     c = m.get_row(1)[0]
     d = m.get_row(1)[1]
-    trace = complex_number_add(a, d)
-    determinant = complex_number_subtract(
-        complex_number_multiply(a, d), complex_number_multiply(b, c)
-    )
-    square_root = (
-        complex_number_subtract(
-            complex_number_multiply(trace, trace),
-            complex_number_multiply(four, determinant),
-        )
-    ).square_root()
-    lambda1 = complex_number_divide(complex_number_add(trace, square_root), two)
-    lambda2 = complex_number_divide(complex_number_subtract(trace, square_root), two)
+    trace = a + d
+    determinant = (a * d) - (b * c)
+    square_root = ((trace * trace) - (4 * determinant)).square_root()
+    lambda1 = (trace + square_root) / 2
+    lambda2 = (trace - square_root) / 2
     return [lambda1, lambda2]
 
 
@@ -76,15 +60,11 @@ def complex_matrix_eigenvectors(m: ComplexMatrix) -> list[ComplexVector]:
     eigenvalues = complex_matrix_eigenvalues(m)
     m1 = complex_matrix_add(
         m,
-        identity(2).scalar_multiplication(
-            complex_number_multiply(eigenvalues[0], minus_one)
-        ),
+        identity(2).scalar_multiplication((eigenvalues[0] * -1)),
     )
     m2 = complex_matrix_add(
         m,
-        identity(2).scalar_multiplication(
-            complex_number_multiply(eigenvalues[1], minus_one)
-        ),
+        identity(2).scalar_multiplication((eigenvalues[1] * -1)),
     )
     # Find smallest of pair
     eigenvectors: list[ComplexVector] = []
