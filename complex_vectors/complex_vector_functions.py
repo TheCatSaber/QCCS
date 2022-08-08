@@ -15,7 +15,7 @@ def complex_vector_inner_product(v1: ComplexVector, v2: ComplexVector) -> Comple
 
 
 def complex_vector_distance(v1: ComplexVector, v2: ComplexVector) -> float:
-    return (v1 + v2.inverse()).norm()
+    return (v1 - v2).norm()
 
 
 def complex_vector_tensor_product(

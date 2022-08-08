@@ -36,8 +36,8 @@ class ComplexVector:
     def inverse(self) -> ComplexVector:
         return ComplexVector([c.inverse() for c in self._vector])
 
-    def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexVector:
-        return ComplexVector([(c * scalar) for c in self._vector])
+    # def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexVector:
+    #     return ComplexVector([(c * scalar) for c in self._vector])
 
     def norm(self) -> float:
         return math.sqrt(self.norm_squared())
@@ -54,10 +54,10 @@ class ComplexVector:
             return ComplexVector([self[i] + other[i] for i in range(len(self))])
         elif isinstance(other, list):
             if not all(isinstance(c, ComplexNumber | int | float) for c in other):  # type: ignore
-                raise NotImplementedError
+                return NotImplemented
             return self + ComplexVector(other)  # type: ignore
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __radd__(self, other: object) -> ComplexVector:
         return self + other
@@ -67,10 +67,17 @@ class ComplexVector:
             return self + other.inverse()
         elif isinstance(other, list):
             if not all(isinstance(c, ComplexNumber | int | float) for c in other):  # type: ignore
-                raise NotImplementedError
+                return NotImplemented
             return self - ComplexVector(other)  # type: ignore
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __rsub__(self, other: object) -> ComplexVector:
         return self.inverse() + other
+
+    def __rmul__(self, other: object) -> ComplexVector:
+        """Left multiplication by a scalar. The matrix is on the right of the scalar."""
+        if isinstance(other, ComplexNumber | int | float):
+            return ComplexVector([(c * other) for c in self._vector])
+        else:
+            return NotImplemented

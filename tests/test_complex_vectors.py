@@ -9,10 +9,6 @@ from context import (
     complex_vector_tensor_product,
 )
 
-zero = ComplexNumber(0, 0)
-one = ComplexNumber(1, 0)
-two = ComplexNumber(2, 0)
-
 zero_vector = ComplexVector([0])
 v1 = ComplexVector([ComplexNumber(1, 1)])
 v2 = ComplexVector([ComplexNumber(2, 1), ComplexNumber(1, 1)])
@@ -108,13 +104,13 @@ class ComplexVectorAdditionCheck(unittest.TestCase):
             _ = v1 + v2
 
     def test___add___wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = v1 + 1
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = 1 + v1
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = v1 + ["1"]
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = ["1"] + v1
 
 
@@ -129,13 +125,13 @@ class ComplexVectorSubtractCheck(unittest.TestCase):
         self.assertEqual(v5_3 - ComplexVector(v5_2), v5_1)
 
     def test___sub_wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = v1 - 1
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = 1 - v1
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = v1 - ["1"]
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = ["1"] - v1
 
     def test___add___different_lengths_error(self):
@@ -164,13 +160,26 @@ class ComplexVectorInverseCheck(unittest.TestCase):
 
 
 class ComplexVectorScalarMultiplicationCheck(unittest.TestCase):
-    def test_multiply_by_zero(self):
-        self.assertEqual(zero_vector, v1.scalar_multiplication(ComplexNumber(0, 0)))
+    def test___rmul___zero(self):
+        self.assertEqual(0 * v1, [0])
 
-    def test_multiply_v5(self):
+    def test___rmul___int(self):
+        self.assertEqual(
+            3 * ComplexVector([1, ComplexNumber(3, 2), ComplexNumber(1, 2)]),
+            [3, ComplexNumber(9, 6), ComplexNumber(3, 6)],
+        )
+
+    def test___rmul___float(self):
+        self.assertEqual(
+            -2.4 * ComplexVector([1, ComplexNumber(3, 2), ComplexNumber(1, 2)]),
+            ComplexVector([-2.4, ComplexNumber(-7.2, -4.8), ComplexNumber(-2.4, -4.8)]),
+        )
+
+    def test___rmul___complex_number(self):
         # Worked out using a calculator that supports complex numbers
         # Should probably have used a smaller example, or one from the textbook
         self.assertEqual(
+            ComplexNumber(3, 2) * v5,
             ComplexVector(
                 [
                     0,
@@ -180,8 +189,13 @@ class ComplexVectorScalarMultiplicationCheck(unittest.TestCase):
                     ComplexNumber(5, -40),
                 ],
             ),
-            v5.scalar_multiplication(ComplexNumber(3, 2)),
         )
+
+    def test___rmul___wrong_type(self):
+        with self.assertRaises(TypeError):
+            _ = [""] * v1
+        with self.assertRaises(TypeError):
+            _ = v1 * v1
 
 
 class ComplexVectorInnerProductCheck(unittest.TestCase):

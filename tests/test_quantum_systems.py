@@ -18,9 +18,7 @@ one = ComplexNumber(1, 0)
 two = ComplexNumber(2, 0)
 four = ComplexNumber(4, 0)
 
-sqrt_2_by_2 = ComplexNumber(1 / math.sqrt(2), 0)
-
-
+sqrt_2_by_2 = 1 / math.sqrt(2)
 negative_i = ComplexNumber(0, -1)
 i = ComplexNumber(0, 1)
 
@@ -55,8 +53,8 @@ class TransitionAmplitudeCheck(unittest.TestCase):
         self.assertEqual(
             negative_i,
             transition_amplitude(
-                one_i.scalar_multiplication(sqrt_2_by_2),
-                i_minus_one.scalar_multiplication(sqrt_2_by_2),
+                sqrt_2_by_2 * one_i,
+                sqrt_2_by_2 * i_minus_one,
             ),
         )
 
@@ -78,7 +76,7 @@ class ObservableMeanCheck(unittest.TestCase):
             ComplexNumber(2.5, 0),
             observable_mean(
                 m1,
-                one_i.scalar_multiplication(sqrt_2_by_2),
+                sqrt_2_by_2 * one_i,
             ),
         )
 
@@ -87,7 +85,7 @@ class ObservableMeanCheck(unittest.TestCase):
             ComplexNumber(3, 0),
             observable_mean(
                 m2,
-                one_i.scalar_multiplication(sqrt_2_by_2),
+                sqrt_2_by_2 * one_i,
             ),
         )
 
@@ -104,13 +102,11 @@ class ObservableVarianceCheck(unittest.TestCase):
     def test_non_diagonal_observable(self):
         self.assertEqual(
             ComplexNumber(0.25, 0),
-            observable_variance(m1, one_i.scalar_multiplication(sqrt_2_by_2)),
+            observable_variance(m1, sqrt_2_by_2 * one_i),
         )
 
     def test_diagonal_observable(self):
-        self.assertEqual(
-            one, observable_variance(m2, one_i.scalar_multiplication(sqrt_2_by_2))
-        )
+        self.assertEqual(one, observable_variance(m2, sqrt_2_by_2 * one_i))
 
 
 class ObservableProbabilityCheck(unittest.TestCase):

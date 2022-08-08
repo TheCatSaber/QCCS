@@ -72,9 +72,9 @@ def probability_of_each_eigenstate(
         normalized_eigenvectors.append(ComplexVector(normalized_eigenvector))
 
     for lambda_, eigenvector in zip(eigenvalues, normalized_eigenvectors):
-        assert complex_matrix_vector_multiply(
-            matrix, eigenvector
-        ) == eigenvector.scalar_multiplication(lambda_)
+        assert (
+            complex_matrix_vector_multiply(matrix, eigenvector) == lambda_ * eigenvector
+        )
 
     probabilities: list[float] = []
     for eigenvector in normalized_eigenvectors:
