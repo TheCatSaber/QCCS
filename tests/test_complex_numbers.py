@@ -90,9 +90,9 @@ class ComplexNumber__eq__Check(unittest.TestCase):
 
 class ComplexNumberAddCheck(unittest.TestCase):
     def test___add___wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = ComplexNumber(1, 1) + "1"
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = "1" + ComplexNumber(1, 1)
 
     def test___add___real(self):
@@ -135,11 +135,11 @@ class ComplexNumberSubtractCheck(unittest.TestCase):
         self.assertEqual(1.4 - ComplexNumber(1, 1), ComplexNumber(0.4, -1))
 
     def test___sub___wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = ComplexNumber(1, 1) - "1"
 
     def test___rsub___wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = "1" - ComplexNumber(1, 1)
 
 
@@ -158,9 +158,9 @@ class ComplexNumberMultiplyCheck(unittest.TestCase):
         self.assertEqual(-2.5 * ComplexNumber(1.6, 4.4), ComplexNumber(-4, -11))
 
     def test___mul___wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = "1" * ComplexNumber(1, 1)
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = ComplexNumber(1, 1) * "1"
 
 
@@ -190,11 +190,11 @@ class ComplexNumberDivideCheck(unittest.TestCase):
             _ = ComplexNumber(-2, 1) / 0
 
     def test___truediv___wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = ComplexNumber(1, 1) / "1"
 
     def test___rtruediv___wrong_type(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             _ = "1" / ComplexNumber(1, 1)
 
 

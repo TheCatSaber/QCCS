@@ -101,7 +101,7 @@ class ComplexNumber:
         elif isinstance(other, int | float):
             return ComplexNumber(self._re + other, self._im)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __radd__(self, other: object) -> ComplexNumber:
         return self + other
@@ -112,13 +112,13 @@ class ComplexNumber:
         elif isinstance(other, int | float):
             return ComplexNumber(self._re - other, self._im)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __rsub__(self, other: object) -> ComplexNumber:
         if isinstance(other, ComplexNumber | int | float):
             return other + self.inverse()
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __mul__(self, other: object) -> ComplexNumber:
         if isinstance(other, int | float):
@@ -128,7 +128,7 @@ class ComplexNumber:
             new_imaginary: float = (self._im * other._re) + (self._re * other._im)
             return ComplexNumber(new_real, new_imaginary)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __rmul__(self, other: object) -> ComplexNumber:
         return self * other
@@ -137,7 +137,7 @@ class ComplexNumber:
         if isinstance(other, int | float):
             return ComplexNumber(self._re / other, self._im / other)
         if not isinstance(other, ComplexNumber):
-            raise NotImplementedError
+            return NotImplemented
         modulus_squared = other.modulus_squared()
         return (self * other.conjugate()) / modulus_squared
 
@@ -146,4 +146,4 @@ class ComplexNumber:
             return (other * self.conjugate()) / self.modulus_squared()
         # other should never ComplexNumber
         else:
-            raise NotImplementedError
+            return NotImplemented
