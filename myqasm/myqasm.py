@@ -9,6 +9,15 @@ class TokenNameEnum(Enum):
     SEPARATOR = auto()
 
 
+class KeywordEnum(Enum):
+    INITIALIZE = auto()
+    SELECT = auto()
+    CONCAT = auto()
+    TENSOR = auto()
+    INVERSE = auto()
+    APPLY = auto()
+    MEASURE = auto()
+
 class InvalidMYQASMSyntaxError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
@@ -28,13 +37,13 @@ def _valid_number(number: str, error_message: str = "Invalid number.") -> None:
         raise InvalidMYQASMSyntaxError(error_message)
 
 
-def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str]]]:
-    token_list: list[tuple[TokenNameEnum, Optional[str]]] = []
+def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]]:
+    token_list: list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]] = []
     string_list = expression.split(" ")
     number_of_strings = len(string_list)
     match (a := string_list[0]):
         case "INITIALIZE":
-            token_list.append((TokenNameEnum.KEYWORD, a))
+            token_list.append((TokenNameEnum.KEYWORD, KeywordEnum.INITIALIZE))
             if number_of_strings not in [3, 4]:
                 raise InvalidMYQASMSyntaxError(
                     "INITIALIZE must be followed by followed by 2 or 3 strings."
@@ -74,7 +83,7 @@ def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str]]]:
                 token_list.append((TokenNameEnum.LITERAL, numbers))
                 token_list.append((TokenNameEnum.SEPARATOR, "]"))
         case "SELECT":
-            token_list.append((TokenNameEnum.KEYWORD, a))
+            token_list.append((TokenNameEnum.KEYWORD, KeywordEnum.SELECT))
             if number_of_strings != 5:
                 raise InvalidMYQASMSyntaxError(
                     "INITIALIZE must be followed by followed by 4 strings."
@@ -98,7 +107,7 @@ def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str]]]:
             token_list.append((TokenNameEnum.LITERAL, number1))
             token_list.append((TokenNameEnum.LITERAL, number2))
         case "APPLY":
-            token_list.append((TokenNameEnum.KEYWORD, a))
+            token_list.append((TokenNameEnum.KEYWORD, KeywordEnum.APPLY))
             if number_of_strings != 3:
                 raise InvalidMYQASMSyntaxError("APPLY must be followed by 2 strings.")
 
@@ -110,7 +119,7 @@ def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str]]]:
             token_list.append((TokenNameEnum.IDENTIFIER, identifier1))
             token_list.append((TokenNameEnum.IDENTIFIER, identifier2))
         case "MEASURE":
-            token_list.append((TokenNameEnum.KEYWORD, a))
+            token_list.append((TokenNameEnum.KEYWORD, KeywordEnum.MEASURE))
             if number_of_strings != 2:
                 raise InvalidMYQASMSyntaxError("APPLY must be followed by 1 string.")
 
@@ -125,11 +134,18 @@ def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str]]]:
             if number_of_strings < 2:
                 raise InvalidMYQASMSyntaxError("Cannot have an identifier by itself.")
             keyword = string_list[1]
-            if keyword not in ["CONCAT", "TENSOR", "INVERSE"]:
+            keyword_enum_value = None
+            if keyword == "CONCAT":
+                keyword_enum_value = KeywordEnum.CONCAT
+            elif keyword == "TENSOR":
+                keyword_enum_value = KeywordEnum.TENSOR
+            elif keyword == "INVERSE":
+                keyword_enum_value = KeywordEnum.INVERSE
+            else:
                 raise InvalidMYQASMSyntaxError(
                     "Invalid keyword following an identifier."
                 )
-            token_list.append((TokenNameEnum.KEYWORD, keyword))
+            token_list.append((TokenNameEnum.KEYWORD, keyword_enum_value))
             if keyword in ["CONCAT", "TENSOR"]:
                 if number_of_strings != 4:
                     raise InvalidMYQASMSyntaxError(

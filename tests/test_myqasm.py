@@ -1,6 +1,6 @@
 import unittest
 
-from context import MYQASM_lexer, TokenNameEnum, InvalidMYQASMSyntaxError
+from context import InvalidMYQASMSyntaxError, KeywordEnum, MYQASM_lexer, TokenNameEnum
 
 
 class LexerCheck(unittest.TestCase):
@@ -8,7 +8,7 @@ class LexerCheck(unittest.TestCase):
         self.assertEqual(
             MYQASM_lexer("INITIALIZE R 5"),
             [
-                (TokenNameEnum.KEYWORD, "INITIALIZE"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.INITIALIZE),
                 (TokenNameEnum.IDENTIFIER, "R"),
                 (TokenNameEnum.LITERAL, "5"),
             ],
@@ -18,7 +18,7 @@ class LexerCheck(unittest.TestCase):
         self.assertEqual(
             MYQASM_lexer("INITIALIZE R1_a 4 [0110]"),
             [
-                (TokenNameEnum.KEYWORD, "INITIALIZE"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.INITIALIZE),
                 (TokenNameEnum.IDENTIFIER, "R1_a"),
                 (TokenNameEnum.LITERAL, "4"),
                 (TokenNameEnum.SEPARATOR, "["),
@@ -47,7 +47,7 @@ class LexerCheck(unittest.TestCase):
         self.assertEqual(
             MYQASM_lexer("SELECT S-1 R 2 4"),
             [
-                (TokenNameEnum.KEYWORD, "SELECT"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.SELECT),
                 (TokenNameEnum.IDENTIFIER, "S-1"),
                 (TokenNameEnum.IDENTIFIER, "R"),
                 (TokenNameEnum.LITERAL, "2"),
@@ -66,7 +66,7 @@ class LexerCheck(unittest.TestCase):
         self.assertEqual(
             MYQASM_lexer("APPLY U R"),
             [
-                (TokenNameEnum.KEYWORD, "APPLY"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.APPLY),
                 (TokenNameEnum.IDENTIFIER, "U"),
                 (TokenNameEnum.IDENTIFIER, "R"),
             ],
@@ -81,7 +81,7 @@ class LexerCheck(unittest.TestCase):
         self.assertEqual(
             MYQASM_lexer("MEASURE R"),
             [
-                (TokenNameEnum.KEYWORD, "MEASURE"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.MEASURE),
                 (TokenNameEnum.IDENTIFIER, "R"),
             ],
         )
@@ -101,7 +101,7 @@ class LexerCheck(unittest.TestCase):
             MYQASM_lexer("U CONCAT R0.5 U2"),
             [
                 (TokenNameEnum.IDENTIFIER, "U"),
-                (TokenNameEnum.KEYWORD, "CONCAT"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.CONCAT),
                 (TokenNameEnum.IDENTIFIER, "R0.5"),
                 (TokenNameEnum.IDENTIFIER, "U2"),
             ],
@@ -117,7 +117,7 @@ class LexerCheck(unittest.TestCase):
             MYQASM_lexer("U TENSOR U1 U2"),
             [
                 (TokenNameEnum.IDENTIFIER, "U"),
-                (TokenNameEnum.KEYWORD, "TENSOR"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.TENSOR),
                 (TokenNameEnum.IDENTIFIER, "U1"),
                 (TokenNameEnum.IDENTIFIER, "U2"),
             ],
@@ -133,7 +133,7 @@ class LexerCheck(unittest.TestCase):
             MYQASM_lexer("U INVERSE U1"),
             [
                 (TokenNameEnum.IDENTIFIER, "U"),
-                (TokenNameEnum.KEYWORD, "INVERSE"),
+                (TokenNameEnum.KEYWORD, KeywordEnum.INVERSE),
                 (TokenNameEnum.IDENTIFIER, "U1"),
             ],
         )

@@ -1,2 +1,8 @@
 # type: ignore
-from .myqasm import MYQASM_lexer, MYQASM, TokenNameEnum, InvalidMYQASMSyntaxError
+from .myqasm import (
+    MYQASM,
+    InvalidMYQASMSyntaxError,
+    KeywordEnum,
+    MYQASM_lexer,
+    TokenNameEnum,
+)
