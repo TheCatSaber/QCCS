@@ -1,6 +1,10 @@
 from enum import Enum, auto
 from typing import Optional
 
+from complex_vectors import ComplexVector
+
+_registers: dict[str, ComplexVector] = {}
+
 
 class TokenNameEnum(Enum):
     KEYWORD = auto()
@@ -18,13 +22,42 @@ class KeywordEnum(Enum):
     APPLY = auto()
     MEASURE = auto()
 
+
 class InvalidMYQASMSyntaxError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
 
+def get_registers():
+    return _registers
+
+
 def MYQASM(expression: str) -> Optional[list[int]]:
-    pass  # pragma: no cover
+    global _registers
+    token_stream = MYQASM_lexer(expression)
+    keyword = None
+    for token in token_stream:
+        if token[0] == TokenNameEnum.KEYWORD:
+            keyword = token[1]
+            assert isinstance(keyword, KeywordEnum)
+            break
+    assert keyword is not None
+    match keyword:
+        case KeywordEnum.INITIALIZE:
+            identifier = token_stream[1][1]
+            qubit_count = token_stream[2][1]
+            assert isinstance(identifier, str)
+            assert isinstance(qubit_count, str)
+            v: list[int] = [1] + [0] * ((2 ** int(qubit_count)) - 1)
+            if len(token_stream) == 6:
+                initial_state = token_stream[4][1]
+                assert isinstance(initial_state, str)
+                v[0] = 0
+                v[int(initial_state, 2)] = 1
+            _registers[identifier] = ComplexVector(v)
+            return None
+        case _:
+            pass
 
 
 def _valid_identifier(identifier: str) -> None:
@@ -37,8 +70,10 @@ def _valid_number(number: str, error_message: str = "Invalid number.") -> None:
         raise InvalidMYQASMSyntaxError(error_message)
 
 
-def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]]:
-    token_list: list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]] = []
+def MYQASM_lexer(
+    expression: str,
+) -> list[tuple[TokenNameEnum, str | KeywordEnum]]:
+    token_list: list[tuple[TokenNameEnum, str | KeywordEnum]] = []
     string_list = expression.split(" ")
     number_of_strings = len(string_list)
     match (a := string_list[0]):

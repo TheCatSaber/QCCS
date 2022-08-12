@@ -5,4 +5,5 @@ from .myqasm import (
     KeywordEnum,
     MYQASM_lexer,
     TokenNameEnum,
+    get_registers,
 )

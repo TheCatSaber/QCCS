@@ -1,6 +1,14 @@
 import unittest
 
-from context import InvalidMYQASMSyntaxError, KeywordEnum, MYQASM_lexer, TokenNameEnum
+from context import (
+    MYQASM,
+    ComplexVector,
+    InvalidMYQASMSyntaxError,
+    KeywordEnum,
+    MYQASM_lexer,
+    TokenNameEnum,
+    get_registers,
+)
 
 
 class LexerCheck(unittest.TestCase):
@@ -141,6 +149,16 @@ class LexerCheck(unittest.TestCase):
     def test_inverse_lexing_invalid(self):
         self.assertRaises(InvalidMYQASMSyntaxError, MYQASM_lexer, "U INVERSE U1 U2")
         self.assertRaises(InvalidMYQASMSyntaxError, MYQASM_lexer, "U INVERSE *")
+
+
+class MYQASMCheck(unittest.TestCase):
+    def test_initialize_normal(self):
+        MYQASM("INITIALIZE R 5")
+        self.assertEqual(get_registers()["R"], ComplexVector([1] + [0] * 31))
+
+    def test_initialize_with_given_qubits(self):
+        MYQASM("INITIALIZE R1 4 [0110]")
+        self.assertEqual(get_registers()["R1"], ComplexVector([0] * 6 + [1] + [0] * 9))
 
 
 if __name__ == "__main__":
