@@ -44,7 +44,7 @@ jobs:
       uses: rickstaa/action-black@v1.1.14
       with:
         # Black input arguments.
-        black_args: --target-version py310 --experimental-string-processing # optional, default is 
+        black_args: --target-version py310 --preview # optional, default is 
         # Exit code when black formatting errors are found [true, false]. Defaults to 'true'.
 
         fail_on_error: true # optional, default is true
