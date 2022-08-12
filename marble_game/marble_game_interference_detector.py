@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from complex_matrices import ComplexMatrix, complex_matrix_multiply
+from complex_matrices import ComplexMatrix
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 
@@ -65,8 +65,8 @@ class InterferenceDetector:
         c = classical_counter_part
         for _ in range(n - 1):
             # n iterations means n-1 matrix multiplications of matrices to get the resultant matrix
-            m = complex_matrix_multiply(m, self.movement_matrix)
-            c = complex_matrix_multiply(c, classical_counter_part)
+            m = m * self.movement_matrix
+            c = c * classical_counter_part
 
         difference_list: list[tuple[int, int]] = []
 

@@ -10,8 +10,6 @@ from context import (
     MarbleGame,
     ProbabilisticMarbleGame,
     QuantumMarbleGame,
-    complex_matrix_multiply,
-    identity,
 )
 
 minus_one = ComplexNumber(-1, 0)
@@ -253,7 +251,7 @@ class QuantumMarbleGameInitCheck(unittest.TestCase):
             2,
             1,
             ComplexVector([half, half]),
-            identity(2),
+            ComplexMatrix.identity(2),
         )
 
     def test_invalid_column_sum(self):
@@ -349,9 +347,9 @@ class InterferenceDetectorIterationsCheck(unittest.TestCase):
             # And that the interference is correctly detected.
             InterferenceDetectorOutput(
                 self.m,
-                complex_matrix_multiply(self.m, self.m),
+                self.m * self.m,
                 self.m.moduli_squared_matrix(),
-                complex_matrix_multiply(self.m, self.m).moduli_squared_matrix(),
+                (self.m * self.m).moduli_squared_matrix(),
                 [(5, 0)],
             ),
             InterferenceDetector(8, self.m).calculate_interference(2),

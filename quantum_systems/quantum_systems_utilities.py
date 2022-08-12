@@ -1,11 +1,6 @@
 import math
 
-from complex_matrices import (
-    ComplexMatrix,
-    complex_matrix_add,
-    complex_matrix_multiply,
-    identity,
-)
+from complex_matrices import ComplexMatrix
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector, complex_vector_inner_product
 from shared import (
@@ -47,11 +42,9 @@ def observable_mean(matrix: ComplexMatrix, ket: ComplexVector) -> ComplexNumber:
 def observable_variance(matrix: ComplexMatrix, ket: ComplexVector) -> ComplexNumber:
     expectation = observable_mean(matrix, ket)
 
-    Delta = complex_matrix_add(
-        matrix, identity(len(ket)).scalar_multiplication(expectation.inverse())
-    )
+    Delta = matrix + (expectation.inverse() * ComplexMatrix.identity(len(ket)))
 
-    Delta_squared = complex_matrix_multiply(Delta, Delta)
+    Delta_squared = Delta * Delta
 
     # Variance = E((X-m)^2), where m is the mean.
     # Delta = X - m

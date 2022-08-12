@@ -1,4 +1,4 @@
-from complex_matrices import ComplexMatrix, complex_matrix_add, identity
+from complex_matrices import ComplexMatrix
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 
@@ -58,14 +58,8 @@ def complex_matrix_eigenvectors(m: ComplexMatrix) -> list[ComplexVector]:
         return eigenvectors
 
     eigenvalues = complex_matrix_eigenvalues(m)
-    m1 = complex_matrix_add(
-        m,
-        identity(2).scalar_multiplication((eigenvalues[0] * -1)),
-    )
-    m2 = complex_matrix_add(
-        m,
-        identity(2).scalar_multiplication((eigenvalues[1] * -1)),
-    )
+    m1 = m + (eigenvalues[0].inverse() * ComplexMatrix.identity(2))
+    m2 = m + (eigenvalues[1].inverse() * ComplexMatrix.identity(2))
     # Find smallest of pair
     eigenvectors: list[ComplexVector] = []
     column_0 = m2.get_column(0)
