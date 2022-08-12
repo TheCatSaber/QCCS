@@ -157,8 +157,22 @@ class MYQASMCheck(unittest.TestCase):
         self.assertEqual(get_registers()["R"], ComplexVector([1] + [0] * 31))
 
     def test_initialize_with_given_qubits(self):
-        MYQASM("INITIALIZE R1 4 [0110]")
-        self.assertEqual(get_registers()["R1"], ComplexVector([0] * 6 + [1] + [0] * 9))
+        MYQASM("INITIALIZE RA 4 [0110]")
+        self.assertEqual(get_registers()["RA"], ComplexVector([0] * 6 + [1] + [0] * 9))
+
+    def test_initialize_no_gate_name_register(self):
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE H 4")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE CNOT 4")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE I1 4")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE I2 4")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE R1 4")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE R0.5 4")
 
 
 if __name__ == "__main__":

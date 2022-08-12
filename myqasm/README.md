@@ -103,3 +103,13 @@ MEASURE R
 Measure the register R, and return the result (so can be stored in python).
 
 CLEAR? for clearing all registers?
+
+## Pre-defined gates
+
+Hadamard: H
+
+Identity: I1, I2, I3 etc.
+
+Rotation by arbitrary multiples of Pi: R1 (= R pi), R0.5 (= R pi by 2) etc..
+
+Controlled-Not: CNOT

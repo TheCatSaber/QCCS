@@ -32,6 +32,24 @@ def get_registers():
     return _registers
 
 
+def _is_builtin_gate(identifier: str) -> bool:
+    if identifier in ["H", "CNOT"]:
+        return True
+
+    elif identifier[0] == "I" and len(identifier) >= 2:
+        numeric_bit = identifier[1:]
+        return numeric_bit.isdigit()
+
+    elif identifier[0] == "R" and len(identifier) >= 2:
+        numeric_bit = identifier[1:]
+        return all(char.isdigit() or char == "." for char in numeric_bit) and (
+            numeric_bit.count(".") <= 1
+        )
+
+    else:
+        return False
+
+
 def MYQASM(expression: str) -> Optional[list[int]]:
     global _registers
     token_stream = MYQASM_lexer(expression)
@@ -48,6 +66,10 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             qubit_count = token_stream[2][1]
             assert isinstance(identifier, str)
             assert isinstance(qubit_count, str)
+            if _is_builtin_gate(identifier):
+                raise InvalidMYQASMSyntaxError(
+                    "Cannot create register with the name of a builtin gate."
+                )
             v: list[int] = [1] + [0] * ((2 ** int(qubit_count)) - 1)
             if len(token_stream) == 6:
                 initial_state = token_stream[4][1]
