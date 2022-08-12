@@ -1,9 +1,19 @@
+import math
 from enum import Enum, auto
 from typing import Optional
 
+from complex_matrices import ComplexMatrix
+from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 
+one_over_root_two = 1 / math.sqrt(2)
+_hadamard_matrix = ComplexMatrix(
+    [[one_over_root_two, one_over_root_two], [one_over_root_two, -one_over_root_two]]
+)
+_CNOT_matrix = ComplexMatrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])
+
 _registers: dict[str, ComplexVector] = {}
+_user_defined_gates: dict[str, ComplexMatrix] = {}
 
 
 class TokenNameEnum(Enum):
@@ -32,6 +42,10 @@ def get_registers():
     return _registers
 
 
+def get_user_defined_gates():
+    return _user_defined_gates
+
+
 def _is_builtin_gate(identifier: str) -> bool:
     if identifier in ["H", "CNOT"]:
         return True
@@ -48,6 +62,39 @@ def _is_builtin_gate(identifier: str) -> bool:
 
     else:
         return False
+
+
+def _gate_exists(identifier: str) -> bool:
+    return _is_builtin_gate(identifier) or identifier in _user_defined_gates.keys()
+
+
+def _get_gate_matrix(identifier: str) -> ComplexMatrix:
+    if not _gate_exists(identifier):
+        raise InvalidMYQASMSyntaxError("Invalid gate.")
+    if identifier in _user_defined_gates.keys():
+        return _user_defined_gates[identifier]
+    elif _is_builtin_gate(identifier):
+        if identifier == "H":
+            return _hadamard_matrix
+        elif identifier == "CNOT":
+            return _CNOT_matrix
+        elif identifier[0] == "I":
+            return ComplexMatrix.identity(int(identifier[1:]))
+        elif identifier[0] == "R":
+            return ComplexMatrix(
+                [
+                    [1, 0],
+                    [
+                        0,
+                        ComplexNumber.new_from_polar(
+                            1, math.pi * float(identifier[1:])
+                        ),
+                    ],
+                ]
+            )
+    # This line is unreachable, as otherwise the gate would not be a valid gate,
+    # and so InvalidMYQASMSyntaxError would have been raised earlier.
+    raise InvalidMYQASMSyntaxError("Invalid gate.")  # pragma: no cover
 
 
 def MYQASM(expression: str) -> Optional[list[int]]:
@@ -77,7 +124,33 @@ def MYQASM(expression: str) -> Optional[list[int]]:
                 v[0] = 0
                 v[int(initial_state, 2)] = 1
             _registers[identifier] = ComplexVector(v)
-            return None
+            return
+        case KeywordEnum.CONCAT:
+            new_gate_name = token_stream[0][1]
+            old_gate_1 = token_stream[2][1]
+            old_gate_2 = token_stream[3][1]
+            assert isinstance(new_gate_name, str)
+            assert isinstance(old_gate_1, str)
+            assert isinstance(old_gate_2, str)
+            if not (_gate_exists(old_gate_1) and _gate_exists(old_gate_2)):
+                raise InvalidMYQASMSyntaxError(
+                    "Attempting to CONCAT gates that do not exist."
+                )
+            if _is_builtin_gate(new_gate_name):
+                raise InvalidMYQASMSyntaxError("Attempting to redefine builtin gate.")
+            if new_gate_name in _registers.keys():
+                raise InvalidMYQASMSyntaxError(
+                    "Attempting to redefine a user-defined register"
+                )
+            try:
+                _user_defined_gates[new_gate_name] = _get_gate_matrix(
+                    old_gate_1
+                ) * _get_gate_matrix(old_gate_2)
+            except ValueError:
+                raise InvalidMYQASMSyntaxError(
+                    "Cannot CONCAT gates that act on different number of qubits."
+                )
+            return
         case _:
             pass
 

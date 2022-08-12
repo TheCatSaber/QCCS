@@ -6,4 +6,5 @@ from .myqasm import (
     MYQASM_lexer,
     TokenNameEnum,
     get_registers,
+    get_user_defined_gates,
 )

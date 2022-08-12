@@ -1,13 +1,16 @@
+import math
 import unittest
 
 from context import (
     MYQASM,
+    ComplexMatrix,
     ComplexVector,
     InvalidMYQASMSyntaxError,
     KeywordEnum,
     MYQASM_lexer,
     TokenNameEnum,
     get_registers,
+    get_user_defined_gates,
 )
 
 
@@ -173,6 +176,42 @@ class MYQASMCheck(unittest.TestCase):
             MYQASM("INITIALIZE R1 4")
         with self.assertRaises(InvalidMYQASMSyntaxError):
             MYQASM("INITIALIZE R0.5 4")
+
+    def test_concat(self):
+        MYQASM("A CONCAT H H")
+        self.assertEqual(get_user_defined_gates()["A"], ComplexMatrix.identity(2))
+        MYQASM("B CONCAT A H")
+        self.assertEqual(
+            get_user_defined_gates()["B"],
+            ComplexMatrix(
+                [
+                    [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                    [1 / math.sqrt(2), -1 / math.sqrt(2)],
+                ]
+            ),
+        )
+        MYQASM("C CONCAT I4 CNOT")
+        self.assertEqual(
+            get_user_defined_gates()["C"],
+            ComplexMatrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]),
+        )
+        MYQASM("D CONCAT R1 I2")
+        self.assertEqual(
+            get_user_defined_gates()["D"], ComplexMatrix([[1, 0], [0, -1]])
+        )
+
+    def test_concat_invalid(self):
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE REGISTER 1")
+            MYQASM("REGISTER CONCAT H H")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("F CONCAT U H")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("F CONCAT H U")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("F CONCAT H CNOT")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("I2 CONCAT H H")
 
 
 if __name__ == "__main__":
