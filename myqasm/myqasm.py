@@ -143,7 +143,7 @@ def MYQASM(expression: str) -> Optional[list[int]]:
                 raise InvalidMYQASMSyntaxError("Attempting to redefine builtin gate.")
             if new_gate_name in _registers.keys():
                 raise InvalidMYQASMSyntaxError(
-                    "Attempting to redefine a user-defined register"
+                    "Attempting to redefine a user-defined register."
                 )
             if keyword == KeywordEnum.CONCAT:
                 try:
@@ -159,6 +159,23 @@ def MYQASM(expression: str) -> Optional[list[int]]:
                 _user_defined_gates[new_gate_name] = tensor_product(
                     _get_gate_matrix(old_gate_1), _get_gate_matrix(old_gate_2)
                 )
+        case KeywordEnum.INVERSE:
+            new_gate_name = token_stream[0][1]
+            old_gate = token_stream[2][1]
+            assert isinstance(new_gate_name, str)
+            assert isinstance(old_gate, str)
+            if not _gate_exists(old_gate):
+                raise InvalidMYQASMSyntaxError(
+                    f"Attempting to INVERSE a gate that does not exist."
+                )
+
+            if _is_builtin_gate(new_gate_name):
+                raise InvalidMYQASMSyntaxError("Attempting to redefine builtin gate.")
+            if new_gate_name in _registers.keys():
+                raise InvalidMYQASMSyntaxError(
+                    "Attempting to redefine a user-defined register."
+                )
+            _user_defined_gates[new_gate_name] = _get_gate_matrix(old_gate).adjoint()
         case KeywordEnum.MEASURE:
             register_name = token_stream[1][1]
             assert isinstance(register_name, str)

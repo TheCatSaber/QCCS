@@ -4,6 +4,7 @@ import unittest
 from context import (
     MYQASM,
     ComplexMatrix,
+    ComplexNumber,
     ComplexVector,
     InvalidMYQASMSyntaxError,
     KeywordEnum,
@@ -11,6 +12,14 @@ from context import (
     TokenNameEnum,
     get_registers,
     get_user_defined_gates,
+    tensor_product,
+)
+
+hadamard = ComplexMatrix(
+    [
+        [1 / math.sqrt(2), 1 / math.sqrt(2)],
+        [1 / math.sqrt(2), -1 / math.sqrt(2)],
+    ]
 )
 
 
@@ -229,51 +238,16 @@ class MYQASMCheck(unittest.TestCase):
         MYQASM("T1 TENSOR I2 H")
         self.assertEqual(
             get_user_defined_gates()["T1"],
-            ComplexMatrix(
-                [
-                    [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0],
-                    [1 / math.sqrt(2), -1 / math.sqrt(2), 0, 0],
-                    [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)],
-                    [0, 0, 1 / math.sqrt(2), -1 / math.sqrt(2)],
-                ]
-            ),
+            tensor_product(ComplexMatrix.identity(2), hadamard),
         )
         MYQASM("T2 TENSOR H H")
         self.assertEqual(
-            get_user_defined_gates()["T2"],
-            ComplexMatrix(
-                [
-                    [
-                        1 / 2,
-                        1 / 2,
-                        1 / 2,
-                        1 / 2,
-                    ],
-                    [
-                        1 / 2,
-                        -1 / 2,
-                        1 / 2,
-                        -1 / 2,
-                    ],
-                    [
-                        1 / 2,
-                        1 / 2,
-                        -1 / 2,
-                        -1 / 2,
-                    ],
-                    [
-                        1 / 2,
-                        -1 / 2,
-                        -1 / 2,
-                        1 / 2,
-                    ],
-                ]
-            ),
+            get_user_defined_gates()["T2"], tensor_product(hadamard, hadamard)
         )
 
     def test_tensor_invalid(self):
+        MYQASM("INITIALIZE REGISTER 1")
         with self.assertRaises(InvalidMYQASMSyntaxError):
-            MYQASM("INITIALIZE REGISTER 1")
             MYQASM("REGISTER TENSOR H H")
         with self.assertRaises(InvalidMYQASMSyntaxError):
             MYQASM("F TENSOR U H")
@@ -281,6 +255,32 @@ class MYQASMCheck(unittest.TestCase):
             MYQASM("F TENSOR H U")
         with self.assertRaises(InvalidMYQASMSyntaxError):
             MYQASM("I2 TENSOR H H")
+
+    def test_inverse(self):
+        MYQASM("IN1 INVERSE I2")
+        self.assertEqual(get_user_defined_gates()["IN1"], ComplexMatrix.identity(2))
+        MYQASM("IN1 INVERSE R0.5")
+        self.assertEqual(
+            get_user_defined_gates()["IN1"],
+            ComplexMatrix([[1, 0], [0, ComplexNumber(0, -1)]]),
+        )
+        MYQASM("H_BY_INVERSE INVERSE H")
+        self.assertEqual(get_user_defined_gates()["H_BY_INVERSE"], hadamard)
+        MYQASM("I_TENSOR_H TENSOR I2 H")
+        MYQASM("I_TENSOR_H_BY_INVERSE INVERSE I_TENSOR_H")
+        self.assertEqual(
+            get_user_defined_gates()["I_TENSOR_H_BY_INVERSE"],
+            tensor_product(ComplexMatrix.identity(2), hadamard),
+        )
+
+    def test_inverse_invalid(self):
+        MYQASM("INITIALIZE REGISTER 1")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("REGISTER INVERSE H")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("F INVERSE U")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("I2 INVERSE H")
 
 
 if __name__ == "__main__":
