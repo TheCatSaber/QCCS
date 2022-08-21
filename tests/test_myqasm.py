@@ -225,6 +225,63 @@ class MYQASMCheck(unittest.TestCase):
         with self.assertRaises(InvalidMYQASMSyntaxError):
             MYQASM("MEASURE REG_INFINITY")
 
+    def test_tensor(self):
+        MYQASM("T1 TENSOR I2 H")
+        self.assertEqual(
+            get_user_defined_gates()["T1"],
+            ComplexMatrix(
+                [
+                    [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0],
+                    [1 / math.sqrt(2), -1 / math.sqrt(2), 0, 0],
+                    [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)],
+                    [0, 0, 1 / math.sqrt(2), -1 / math.sqrt(2)],
+                ]
+            ),
+        )
+        MYQASM("T2 TENSOR H H")
+        self.assertEqual(
+            get_user_defined_gates()["T2"],
+            ComplexMatrix(
+                [
+                    [
+                        1 / 2,
+                        1 / 2,
+                        1 / 2,
+                        1 / 2,
+                    ],
+                    [
+                        1 / 2,
+                        -1 / 2,
+                        1 / 2,
+                        -1 / 2,
+                    ],
+                    [
+                        1 / 2,
+                        1 / 2,
+                        -1 / 2,
+                        -1 / 2,
+                    ],
+                    [
+                        1 / 2,
+                        -1 / 2,
+                        -1 / 2,
+                        1 / 2,
+                    ],
+                ]
+            ),
+        )
+
+    def test_tensor_invalid(self):
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("INITIALIZE REGISTER 1")
+            MYQASM("REGISTER TENSOR H H")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("F TENSOR U H")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("F TENSOR H U")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("I2 TENSOR H H")
+
 
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover

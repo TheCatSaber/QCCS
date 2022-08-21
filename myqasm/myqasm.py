@@ -3,7 +3,7 @@ import random
 from enum import Enum, auto
 from typing import Optional
 
-from complex_matrices import ComplexMatrix
+from complex_matrices import ComplexMatrix, tensor_product
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
 
@@ -126,7 +126,7 @@ def MYQASM(expression: str) -> Optional[list[int]]:
                 v[int(initial_state, 2)] = 1
             _registers[identifier] = ComplexVector(v)
             return
-        case KeywordEnum.CONCAT:
+        case KeywordEnum.CONCAT | KeywordEnum.TENSOR:
             new_gate_name = token_stream[0][1]
             old_gate_1 = token_stream[2][1]
             old_gate_2 = token_stream[3][1]
@@ -134,24 +134,31 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             assert isinstance(old_gate_1, str)
             assert isinstance(old_gate_2, str)
             if not (_gate_exists(old_gate_1) and _gate_exists(old_gate_2)):
+                error_keyword = "CONCAT" if keyword == KeywordEnum.CONCAT else "TENSOR"
                 raise InvalidMYQASMSyntaxError(
-                    "Attempting to CONCAT gates that do not exist."
+                    f"Attempting to {error_keyword} gates that do not exist."
                 )
+
             if _is_builtin_gate(new_gate_name):
                 raise InvalidMYQASMSyntaxError("Attempting to redefine builtin gate.")
             if new_gate_name in _registers.keys():
                 raise InvalidMYQASMSyntaxError(
                     "Attempting to redefine a user-defined register"
                 )
-            try:
-                _user_defined_gates[new_gate_name] = _get_gate_matrix(
-                    old_gate_1
-                ) * _get_gate_matrix(old_gate_2)
-            except ValueError:
-                raise InvalidMYQASMSyntaxError(
-                    "Cannot CONCAT gates that act on different number of qubits."
+            if keyword == KeywordEnum.CONCAT:
+                try:
+                    _user_defined_gates[new_gate_name] = _get_gate_matrix(
+                        old_gate_1
+                    ) * _get_gate_matrix(old_gate_2)
+                except ValueError:
+                    raise InvalidMYQASMSyntaxError(
+                        "Cannot CONCAT gates that act on different number of qubits."
+                    )
+                return
+            else:
+                _user_defined_gates[new_gate_name] = tensor_product(
+                    _get_gate_matrix(old_gate_1), _get_gate_matrix(old_gate_2)
                 )
-            return
         case KeywordEnum.MEASURE:
             register_name = token_stream[1][1]
             assert isinstance(register_name, str)
