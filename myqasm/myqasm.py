@@ -1,4 +1,5 @@
 import math
+import random
 from enum import Enum, auto
 from typing import Optional
 
@@ -151,6 +152,28 @@ def MYQASM(expression: str) -> Optional[list[int]]:
                     "Cannot CONCAT gates that act on different number of qubits."
                 )
             return
+        case KeywordEnum.MEASURE:
+            register_name = token_stream[1][1]
+            assert isinstance(register_name, str)
+            if register_name not in _registers.keys():
+                raise InvalidMYQASMSyntaxError(
+                    "Attempting to measure a register that does not exist."
+                )
+            vector_representing_state = _registers[register_name]
+            vector_norm_squared = vector_representing_state.norm_squared()
+            number_states = len(vector_representing_state)
+            probabilities = [
+                c.modulus_squared() / vector_norm_squared
+                for c in vector_representing_state
+            ]
+            chosen_state_list = random.choices(
+                range(number_states), weights=probabilities, k=1
+            )
+            chosen_state = chosen_state_list[0]
+            binary_representation = bin(chosen_state).removeprefix("0b")
+            number_in_binary_rep = len(binary_representation)
+            extra_chars = "0" * (int(math.log(number_states, 2)) - number_in_binary_rep)
+            return [int(char) for char in (extra_chars + binary_representation)]
         case _:
             pass
 

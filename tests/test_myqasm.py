@@ -213,6 +213,18 @@ class MYQASMCheck(unittest.TestCase):
         with self.assertRaises(InvalidMYQASMSyntaxError):
             MYQASM("I2 CONCAT H H")
 
+    def test_measure(self):
+        MYQASM("INITIALIZE REG1 5")
+        ans = MYQASM("MEASURE REG1")
+        self.assertEqual(ans, [0, 0, 0, 0, 0])
+        MYQASM("INITIALIZE REG2 4 [0110]")
+        ans = MYQASM("MEASURE REG2")
+        self.assertEqual(ans, [0, 1, 1, 0])
+
+    def test_measure_invalid(self):
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("MEASURE REG_INFINITY")
+
 
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover
