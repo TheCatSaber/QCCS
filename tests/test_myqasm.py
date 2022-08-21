@@ -282,6 +282,30 @@ class MYQASMCheck(unittest.TestCase):
         with self.assertRaises(InvalidMYQASMSyntaxError):
             MYQASM("I2 INVERSE H")
 
+    def test_apply(self):
+        MYQASM("INITIALIZE APPLY_REG 1")
+        MYQASM("APPLY H APPLY_REG")
+        self.assertEqual(
+            get_registers()["APPLY_REG"], [1 / math.sqrt(2), 1 / math.sqrt(2)]
+        )
+        MYQASM("INITIALIZE APPLY_REG2 1 [1]")
+        MYQASM("APPLY H APPLY_REG2")
+        self.assertEqual(
+            get_registers()["APPLY_REG2"], [1 / math.sqrt(2), -1 / math.sqrt(2)]
+        )
+        MYQASM("INITIALIZE APPLY_REG3 2 [10]")
+        MYQASM("APPLY CNOT APPLY_REG3")
+        self.assertEqual(get_registers()["APPLY_REG3"], [0, 0, 0, 1])
+
+    def test_apply_invalid(self):
+        MYQASM("INITIALIZE APPLY_INVALID 1")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("APPLY CNOT APPLY_INVALID")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("APPLY H UNDEFINED")
+        with self.assertRaises(InvalidMYQASMSyntaxError):
+            MYQASM("APPLY UNDEFINED APPLY_INVALID")
+
 
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover

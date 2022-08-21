@@ -6,6 +6,7 @@ from typing import Optional
 from complex_matrices import ComplexMatrix, tensor_product
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
+from shared import complex_matrix_vector_multiply
 
 one_over_root_two = 1 / math.sqrt(2)
 _hadamard_matrix = ComplexMatrix(
@@ -166,7 +167,7 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             assert isinstance(old_gate, str)
             if not _gate_exists(old_gate):
                 raise InvalidMYQASMSyntaxError(
-                    f"Attempting to INVERSE a gate that does not exist."
+                    "Attempting to INVERSE a gate that does not exist."
                 )
 
             if _is_builtin_gate(new_gate_name):
@@ -198,7 +199,29 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             number_in_binary_rep = len(binary_representation)
             extra_chars = "0" * (int(math.log(number_states, 2)) - number_in_binary_rep)
             return [int(char) for char in (extra_chars + binary_representation)]
-        case _:
+        case KeywordEnum.APPLY:
+            gate = token_stream[1][1]
+            register = token_stream[2][1]
+            assert isinstance(gate, str)
+            assert isinstance(register, str)
+            if not _gate_exists(gate):
+                raise InvalidMYQASMSyntaxError(
+                    "Attempting to APPLY a gate that does not exist."
+                )
+            if register not in _registers.keys():
+                raise InvalidMYQASMSyntaxError(
+                    "Attempting to APPLY a gate to a register that does not exist."
+                )
+            try:
+                _registers[register] = complex_matrix_vector_multiply(
+                    _get_gate_matrix(gate), _registers[register]
+                )
+            except ValueError:
+                raise InvalidMYQASMSyntaxError(
+                    "Cannot APPLY to a gate to a different number of qubits that it"
+                    " acts on."
+                )
+        case KeywordEnum.SELECT:
             pass
 
 
