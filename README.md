@@ -23,7 +23,13 @@ pre-commit install
 Format with
 
 ``` sh
-python -m black --target-version py310 --preview * --force-exclude *.md *.txt
+python -m black --preview .
+```
+
+or
+
+``` sh
+black -- preview .
 ```
 
 Run all tests with
