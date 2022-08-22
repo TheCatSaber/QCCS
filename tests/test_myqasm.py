@@ -306,6 +306,22 @@ class MYQASMCheck(unittest.TestCase):
         with self.assertRaises(InvalidMYQASMSyntaxError):
             MYQASM("APPLY UNDEFINED APPLY_INVALID")
 
+    def test_unified_X_gate(self):
+        MYQASM("INITIALIZE UNIFIED1 1")
+        MYQASM("HZ CONCAT H R1")
+        MYQASM("X CONCAT HZ H")
+        MYQASM("APPLY X UNIFIED1")
+        ans = MYQASM("MEASURE UNIFIED1")
+        self.assertEqual(ans, [1])
+
+    def test_unified_Bell_state(self):
+        MYQASM("INITIALIZE UNIFIED2 2")
+        MYQASM("HTI TENSOR H I2")
+        MYQASM("APPLY HTI UNIFIED2")
+        MYQASM("APPLY CNOT UNIFIED2")
+        ans = MYQASM("MEASURE UNIFIED2")
+        self.assertIn(ans, [[0, 0], [1, 1]])
+
 
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover
