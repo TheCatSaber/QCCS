@@ -18,6 +18,7 @@ class KeywordEnum(Enum):
     APPLY = auto()
     MEASURE = auto()
 
+
 class InvalidMYQASMSyntaxError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
@@ -37,7 +38,9 @@ def _valid_number(number: str, error_message: str = "Invalid number.") -> None:
         raise InvalidMYQASMSyntaxError(error_message)
 
 
-def MYQASM_lexer(expression: str) -> list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]]:
+def MYQASM_lexer(
+    expression: str,
+) -> list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]]:
     token_list: list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]] = []
     string_list = expression.split(" ")
     number_of_strings = len(string_list)
