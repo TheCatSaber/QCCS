@@ -1,5 +1,7 @@
 # QCCS
 
+![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/wiki/TheCatSaber/QCCS/python-coverage-comment-action-badge.json)
+
 ## Explanation
 
 Following the programming exercises in the textbook
