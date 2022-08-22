@@ -25,4 +25,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run black
       run: |
-        python -m black --check --target-version py310 --preview * --force-exclude *.txt *.md
+        python -m black --check --preview .
