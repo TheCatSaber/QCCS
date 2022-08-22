@@ -9,6 +9,13 @@ from context import (
     InvalidMYQASMSyntaxError,
     KeywordEnum,
     MYQASM_lexer,
+    MYQASMCONCATDifferentSizeGatesError,
+    MYQASMGateAndRegisterDifferentSizeGatesError,
+    MYQASMGateDoesNotExistError,
+    MYQASMRedefineBuiltinGateError,
+    MYQASMRedefineRegisterError,
+    MYQASMRedefineUserGateError,
+    MYQASMRegisterDoesNotExistError,
     TokenNameEnum,
     get_registers,
     get_user_defined_gates,
@@ -173,18 +180,21 @@ class MYQASMCheck(unittest.TestCase):
         self.assertEqual(get_registers()["RA"], ComplexVector([0] * 6 + [1] + [0] * 9))
 
     def test_initialize_no_gate_name_register(self):
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("INITIALIZE H 4")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("INITIALIZE CNOT 4")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("INITIALIZE I1 4")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("INITIALIZE I2 4")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("INITIALIZE R1 4")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("INITIALIZE R0.5 4")
+        MYQASM("INIT_GATE CONCAT H H")
+        with self.assertRaises(MYQASMRedefineUserGateError):
+            MYQASM("INITIALIZE INIT_GATE 4")
 
     def test_concat(self):
         MYQASM("A CONCAT H H")
@@ -210,16 +220,16 @@ class MYQASMCheck(unittest.TestCase):
         )
 
     def test_concat_invalid(self):
-        with self.assertRaises(InvalidMYQASMSyntaxError):
-            MYQASM("INITIALIZE REGISTER 1")
+        MYQASM("INITIALIZE REGISTER 1")
+        with self.assertRaises(MYQASMRedefineRegisterError):
             MYQASM("REGISTER CONCAT H H")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMGateDoesNotExistError):
             MYQASM("F CONCAT U H")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMGateDoesNotExistError):
             MYQASM("F CONCAT H U")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMCONCATDifferentSizeGatesError):
             MYQASM("F CONCAT H CNOT")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("I2 CONCAT H H")
 
     def test_measure(self):
@@ -231,7 +241,7 @@ class MYQASMCheck(unittest.TestCase):
         self.assertEqual(ans, [0, 1, 1, 0])
 
     def test_measure_invalid(self):
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRegisterDoesNotExistError):
             MYQASM("MEASURE REG_INFINITY")
 
     def test_tensor(self):
@@ -247,13 +257,13 @@ class MYQASMCheck(unittest.TestCase):
 
     def test_tensor_invalid(self):
         MYQASM("INITIALIZE REGISTER 1")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineRegisterError):
             MYQASM("REGISTER TENSOR H H")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMGateDoesNotExistError):
             MYQASM("F TENSOR U H")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMGateDoesNotExistError):
             MYQASM("F TENSOR H U")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("I2 TENSOR H H")
 
     def test_inverse(self):
@@ -275,11 +285,11 @@ class MYQASMCheck(unittest.TestCase):
 
     def test_inverse_invalid(self):
         MYQASM("INITIALIZE REGISTER 1")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRedefineRegisterError):
             MYQASM("REGISTER INVERSE H")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
-            MYQASM("F INVERSE U")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMGateDoesNotExistError):
+            MYQASM("INVERSE_INVALID INVERSE U")
+        with self.assertRaises(MYQASMRedefineBuiltinGateError):
             MYQASM("I2 INVERSE H")
 
     def test_apply(self):
@@ -299,11 +309,11 @@ class MYQASMCheck(unittest.TestCase):
 
     def test_apply_invalid(self):
         MYQASM("INITIALIZE APPLY_INVALID 1")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMGateAndRegisterDifferentSizeGatesError):
             MYQASM("APPLY CNOT APPLY_INVALID")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMRegisterDoesNotExistError):
             MYQASM("APPLY H UNDEFINED")
-        with self.assertRaises(InvalidMYQASMSyntaxError):
+        with self.assertRaises(MYQASMGateDoesNotExistError):
             MYQASM("APPLY UNDEFINED APPLY_INVALID")
 
     def test_unified_X_gate(self):

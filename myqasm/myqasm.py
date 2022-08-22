@@ -40,6 +40,41 @@ class InvalidMYQASMSyntaxError(Exception):
         super().__init__(*args)
 
 
+class MYQASMRedefineBuiltinGateError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMRedefineUserGateError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMGateDoesNotExistError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMRedefineRegisterError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMRegisterDoesNotExistError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMCONCATDifferentSizeGatesError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMGateAndRegisterDifferentSizeGatesError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
 def get_registers():
     return _registers
 
@@ -66,13 +101,15 @@ def _is_builtin_gate(identifier: str) -> bool:
         return False
 
 
+def _is_user_defined_gate(identifier: str) -> bool:
+    return identifier in _user_defined_gates.keys()
+
+
 def _gate_exists(identifier: str) -> bool:
-    return _is_builtin_gate(identifier) or identifier in _user_defined_gates.keys()
+    return _is_builtin_gate(identifier) or _is_user_defined_gate(identifier)
 
 
 def _get_gate_matrix(identifier: str) -> ComplexMatrix:
-    if not _gate_exists(identifier):
-        raise InvalidMYQASMSyntaxError("Invalid gate.")
     if identifier in _user_defined_gates.keys():
         return _user_defined_gates[identifier]
     elif _is_builtin_gate(identifier):
@@ -94,9 +131,9 @@ def _get_gate_matrix(identifier: str) -> ComplexMatrix:
                     ],
                 ]
             )
-    # This line is unreachable, as otherwise the gate would not be a valid gate,
-    # and so InvalidMYQASMSyntaxError would have been raised earlier.
-    raise InvalidMYQASMSyntaxError("Invalid gate.")  # pragma: no cover
+    # This code is not used in reality,
+    # as before this function is called, _gate_exists is called.
+    raise MYQASMGateDoesNotExistError("Invalid gate.")  # pragma: no cover
 
 
 def MYQASM(expression: str) -> Optional[list[int]]:
@@ -116,8 +153,12 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             assert isinstance(identifier, str)
             assert isinstance(qubit_count, str)
             if _is_builtin_gate(identifier):
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMRedefineBuiltinGateError(
                     "Cannot create register with the name of a builtin gate."
+                )
+            elif _is_user_defined_gate(identifier):
+                raise MYQASMRedefineUserGateError(
+                    "Cannot create register with the name of an existing gate."
                 )
             v: list[int] = [1] + [0] * ((2 ** int(qubit_count)) - 1)
             if len(token_stream) == 6:
@@ -136,14 +177,16 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             assert isinstance(old_gate_2, str)
             if not (_gate_exists(old_gate_1) and _gate_exists(old_gate_2)):
                 error_keyword = "CONCAT" if keyword == KeywordEnum.CONCAT else "TENSOR"
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMGateDoesNotExistError(
                     f"Attempting to {error_keyword} gates that do not exist."
                 )
 
             if _is_builtin_gate(new_gate_name):
-                raise InvalidMYQASMSyntaxError("Attempting to redefine builtin gate.")
+                raise MYQASMRedefineBuiltinGateError(
+                    "Attempting to redefine builtin gate."
+                )
             if new_gate_name in _registers.keys():
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMRedefineRegisterError(
                     "Attempting to redefine a user-defined register."
                 )
             if keyword == KeywordEnum.CONCAT:
@@ -152,7 +195,7 @@ def MYQASM(expression: str) -> Optional[list[int]]:
                         old_gate_1
                     ) * _get_gate_matrix(old_gate_2)
                 except ValueError:
-                    raise InvalidMYQASMSyntaxError(
+                    raise MYQASMCONCATDifferentSizeGatesError(
                         "Cannot CONCAT gates that act on different number of qubits."
                     )
                 return
@@ -166,14 +209,16 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             assert isinstance(new_gate_name, str)
             assert isinstance(old_gate, str)
             if not _gate_exists(old_gate):
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMGateDoesNotExistError(
                     "Attempting to INVERSE a gate that does not exist."
                 )
 
             if _is_builtin_gate(new_gate_name):
-                raise InvalidMYQASMSyntaxError("Attempting to redefine builtin gate.")
+                raise MYQASMRedefineBuiltinGateError(
+                    "Attempting to redefine builtin gate."
+                )
             if new_gate_name in _registers.keys():
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMRedefineRegisterError(
                     "Attempting to redefine a user-defined register."
                 )
             _user_defined_gates[new_gate_name] = _get_gate_matrix(old_gate).adjoint()
@@ -181,7 +226,7 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             register_name = token_stream[1][1]
             assert isinstance(register_name, str)
             if register_name not in _registers.keys():
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMRegisterDoesNotExistError(
                     "Attempting to measure a register that does not exist."
                 )
             vector_representing_state = _registers[register_name]
@@ -205,11 +250,11 @@ def MYQASM(expression: str) -> Optional[list[int]]:
             assert isinstance(gate, str)
             assert isinstance(register, str)
             if not _gate_exists(gate):
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMGateDoesNotExistError(
                     "Attempting to APPLY a gate that does not exist."
                 )
             if register not in _registers.keys():
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMRegisterDoesNotExistError(
                     "Attempting to APPLY a gate to a register that does not exist."
                 )
             try:
@@ -217,12 +262,12 @@ def MYQASM(expression: str) -> Optional[list[int]]:
                     _get_gate_matrix(gate), _registers[register]
                 )
             except ValueError:
-                raise InvalidMYQASMSyntaxError(
+                raise MYQASMGateAndRegisterDifferentSizeGatesError(
                     "Cannot APPLY to a gate to a different number of qubits that it"
                     " acts on."
                 )
-        case KeywordEnum.SELECT:
-            pass
+        case KeywordEnum.SELECT:  # pragma: no cover
+            pass  # pragma: no cover
 
 
 def _valid_identifier(identifier: str) -> None:
