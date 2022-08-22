@@ -1,20 +1,16 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# This workflow will install Python dependencies and run tests with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: Tests & Coverage
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: write
 
 jobs:
-  build:
-
+  test:
+    name: Run tests & display coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +22,20 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install black
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with unittest
       run: |
-        python tests/test_runner.py
+        coverage run tests/test_runner.py
+    - name: Coverage comment
+      id: coverage_comment
+      uses: ewjoachim/python-coverage-comment-action@v3
+      with:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Store Pull Request comment to be posted
+      uses: actions/upload-artifact@v3
+      if: steps.coverage_comment.outputs.COMMENT_FILE_WRITTEN == 'true'
+      with:
+        # If you use a different name, update COMMENT_ARTIFACT_NAME accordingly
+        name: python-coverage-comment-action
+        # If you use a different name, update COMMENT_FILENAME accordingly
+        path: python-coverage-comment-action.txt

@@ -1,2 +1,4 @@
 cirq
 pre-commit
+coverage
+black
