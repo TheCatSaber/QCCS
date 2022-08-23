@@ -1,11 +1,25 @@
 import unittest
 
 from context import (
+    AliceAnswer,
+    BobAnswer,
+    alice,
+    bob,
     caesar_decode,
     caesar_encode,
+    knuth,
+    knuth2,
     one_time_pad_encode,
     one_time_pad_key_gen,
+    random_bit_string,
 )
+
+
+class SharedCheck(unittest.TestCase):
+    def test_random_bits(self):
+        string = random_bit_string(17)
+        self.assertTrue(all(char in [0, 1] for char in string))
+        self.assertEqual(len(string), 17)
 
 
 class CaesarShiftCheck(unittest.TestCase):
@@ -112,6 +126,53 @@ class OneTimePadCheck(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             one_time_pad_encode(chr(256), [0] * 8)
+
+
+class BB84Check(unittest.TestCase):
+    def test_alice_right_stuff(self):
+        alice_answer = alice(10)
+        self.assertEqual(len(alice_answer.bit_sent), 10)
+        self.assertEqual(len(alice_answer.sending_basis), 10)
+        self.assertTrue(all(bit in [0, 1] for bit in alice_answer.bit_sent))
+        self.assertTrue(all(bit in [0, 1] for bit in alice_answer.sending_basis))
+
+    def test_bob_right_stuff(self):
+        bob_answer = bob(11)
+        self.assertEqual(len(bob_answer.receiving_basis), 11)
+        self.assertTrue(all(bit in [0, 1] for bit in bob_answer.receiving_basis))
+
+    def test_knuth(self):
+        alice_answer = AliceAnswer(
+            [0, 1, 1, 0, 1],
+            [
+                1,
+                0,
+                1,
+                0,
+                1,
+            ],
+        )
+        bob_answer = BobAnswer([0, 1, 1, 0, 0])
+        knuth_answer = knuth(alice_answer, bob_answer)
+        self.assertEqual(knuth_answer.bit_received[2], 1)
+        self.assertEqual(knuth_answer.bit_received[3], 0)
+        self.assertEqual(knuth_answer.proportion_measured_in_same_basis, 0.4)
+        self.assertTrue(0.4 <= knuth_answer.proportion_correct <= 1)
+
+    def test_knuth2(self):
+        alice_answer = AliceAnswer(
+            [0, 1, 1, 0, 1],
+            [
+                1,
+                0,
+                1,
+                0,
+                1,
+            ],
+        )
+        bob_answer = BobAnswer([0, 1, 1, 0, 0])
+        knuth2_answer = knuth2(alice_answer, bob_answer)
+        self.assertEqual(knuth2_answer, [1, 0])
 
 
 if __name__ == "__main__":

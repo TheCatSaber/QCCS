@@ -1,5 +1,6 @@
-import random
 from typing import Literal
+
+from .cryptography_shared import BitString, random_bit_string
 
 
 def caesar_encode(plaintext: str, key: int) -> str:
@@ -23,11 +24,11 @@ def caesar_decode(ciphertext: str, key: int) -> str:
     return caesar_encode(ciphertext, -key)
 
 
-def one_time_pad_key_gen(n: int) -> list[Literal[0] | Literal[1]]:
-    return [random.choice([0, 1]) for _ in range(n)]
+def one_time_pad_key_gen(n: int) -> BitString:
+    return random_bit_string(n)
 
 
-def one_time_pad_encode(plaintext: str, key: list[Literal[0] | Literal[1]]) -> str:
+def one_time_pad_encode(plaintext: str, key: BitString) -> str:
     if not all(ord(char) < 256 for char in plaintext):
         raise ValueError(
             "One Time Pad only supports 8-bit characters (that is, characters where"
@@ -51,5 +52,5 @@ def one_time_pad_encode(plaintext: str, key: list[Literal[0] | Literal[1]]) -> s
     return "".join(answer_character_list)
 
 
-def one_time_pad_decode(ciphertext: str, key: list[Literal[0] | Literal[1]]) -> str:
+def one_time_pad_decode(ciphertext: str, key: BitString) -> str:
     return one_time_pad_encode(ciphertext, key)
