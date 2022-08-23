@@ -1,5 +1,21 @@
+import math
+import random
 from enum import Enum, auto
 from typing import Optional
+
+from complex_matrices import ComplexMatrix, tensor_product
+from complex_numbers import ComplexNumber
+from complex_vectors import ComplexVector
+from shared import complex_matrix_vector_multiply
+
+one_over_root_two = 1 / math.sqrt(2)
+_hadamard_matrix = ComplexMatrix(
+    [[one_over_root_two, one_over_root_two], [one_over_root_two, -one_over_root_two]]
+)
+_CNOT_matrix = ComplexMatrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])
+
+_registers: dict[str, ComplexVector] = {}
+_user_defined_gates: dict[str, ComplexMatrix] = {}
 
 
 class TokenNameEnum(Enum):
@@ -24,8 +40,234 @@ class InvalidMYQASMSyntaxError(Exception):
         super().__init__(*args)
 
 
+class MYQASMRedefineBuiltinGateError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMRedefineUserGateError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMGateDoesNotExistError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMRedefineRegisterError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMRegisterDoesNotExistError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMCONCATDifferentSizeGatesError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class MYQASMGateAndRegisterDifferentSizeGatesError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+def get_registers():
+    return _registers
+
+
+def get_user_defined_gates():
+    return _user_defined_gates
+
+
+def _is_builtin_gate(identifier: str) -> bool:
+    if identifier in ["H", "CNOT"]:
+        return True
+
+    elif identifier[0] == "I" and len(identifier) >= 2:
+        numeric_bit = identifier[1:]
+        return numeric_bit.isdigit()
+
+    elif identifier[0] == "R" and len(identifier) >= 2:
+        numeric_bit = identifier[1:]
+        return all(char.isdigit() or char == "." for char in numeric_bit) and (
+            numeric_bit.count(".") <= 1
+        )
+
+    else:
+        return False
+
+
+def _is_user_defined_gate(identifier: str) -> bool:
+    return identifier in _user_defined_gates.keys()
+
+
+def _gate_exists(identifier: str) -> bool:
+    return _is_builtin_gate(identifier) or _is_user_defined_gate(identifier)
+
+
+def _get_gate_matrix(identifier: str) -> ComplexMatrix:
+    if identifier in _user_defined_gates.keys():
+        return _user_defined_gates[identifier]
+    elif _is_builtin_gate(identifier):
+        if identifier == "H":
+            return _hadamard_matrix
+        elif identifier == "CNOT":
+            return _CNOT_matrix
+        elif identifier[0] == "I":
+            return ComplexMatrix.identity(int(identifier[1:]))
+        elif identifier[0] == "R":
+            return ComplexMatrix(
+                [
+                    [1, 0],
+                    [
+                        0,
+                        ComplexNumber.new_from_polar(
+                            1, math.pi * float(identifier[1:])
+                        ),
+                    ],
+                ]
+            )
+    # This code is not used in reality,
+    # as before this function is called, _gate_exists is called.
+    raise MYQASMGateDoesNotExistError("Invalid gate.")  # pragma: no cover
+
+
 def MYQASM(expression: str) -> Optional[list[int]]:
-    pass  # pragma: no cover
+    global _registers
+    token_stream = MYQASM_lexer(expression)
+    keyword = None
+    for token in token_stream:
+        if token[0] == TokenNameEnum.KEYWORD:
+            keyword = token[1]
+            assert isinstance(keyword, KeywordEnum)
+            break
+    assert keyword is not None
+    match keyword:
+        case KeywordEnum.INITIALIZE:
+            identifier = token_stream[1][1]
+            qubit_count = token_stream[2][1]
+            assert isinstance(identifier, str)
+            assert isinstance(qubit_count, str)
+            if _is_builtin_gate(identifier):
+                raise MYQASMRedefineBuiltinGateError(
+                    "Cannot create register with the name of a builtin gate."
+                )
+            elif _is_user_defined_gate(identifier):
+                raise MYQASMRedefineUserGateError(
+                    "Cannot create register with the name of an existing gate."
+                )
+            v: list[int] = [1] + [0] * ((2 ** int(qubit_count)) - 1)
+            if len(token_stream) == 6:
+                initial_state = token_stream[4][1]
+                assert isinstance(initial_state, str)
+                v[0] = 0
+                v[int(initial_state, 2)] = 1
+            _registers[identifier] = ComplexVector(v)
+            return
+        case KeywordEnum.CONCAT | KeywordEnum.TENSOR:
+            new_gate_name = token_stream[0][1]
+            old_gate_1 = token_stream[2][1]
+            old_gate_2 = token_stream[3][1]
+            assert isinstance(new_gate_name, str)
+            assert isinstance(old_gate_1, str)
+            assert isinstance(old_gate_2, str)
+            if not (_gate_exists(old_gate_1) and _gate_exists(old_gate_2)):
+                error_keyword = "CONCAT" if keyword == KeywordEnum.CONCAT else "TENSOR"
+                raise MYQASMGateDoesNotExistError(
+                    f"Attempting to {error_keyword} gates that do not exist."
+                )
+
+            if _is_builtin_gate(new_gate_name):
+                raise MYQASMRedefineBuiltinGateError(
+                    "Attempting to redefine builtin gate."
+                )
+            if new_gate_name in _registers.keys():
+                raise MYQASMRedefineRegisterError(
+                    "Attempting to redefine a user-defined register."
+                )
+            if keyword == KeywordEnum.CONCAT:
+                try:
+                    _user_defined_gates[new_gate_name] = _get_gate_matrix(
+                        old_gate_1
+                    ) * _get_gate_matrix(old_gate_2)
+                except ValueError:
+                    raise MYQASMCONCATDifferentSizeGatesError(
+                        "Cannot CONCAT gates that act on different number of qubits."
+                    )
+                return
+            else:
+                _user_defined_gates[new_gate_name] = tensor_product(
+                    _get_gate_matrix(old_gate_1), _get_gate_matrix(old_gate_2)
+                )
+        case KeywordEnum.INVERSE:
+            new_gate_name = token_stream[0][1]
+            old_gate = token_stream[2][1]
+            assert isinstance(new_gate_name, str)
+            assert isinstance(old_gate, str)
+            if not _gate_exists(old_gate):
+                raise MYQASMGateDoesNotExistError(
+                    "Attempting to INVERSE a gate that does not exist."
+                )
+
+            if _is_builtin_gate(new_gate_name):
+                raise MYQASMRedefineBuiltinGateError(
+                    "Attempting to redefine builtin gate."
+                )
+            if new_gate_name in _registers.keys():
+                raise MYQASMRedefineRegisterError(
+                    "Attempting to redefine a user-defined register."
+                )
+            _user_defined_gates[new_gate_name] = _get_gate_matrix(old_gate).adjoint()
+        case KeywordEnum.MEASURE:
+            register_name = token_stream[1][1]
+            assert isinstance(register_name, str)
+            if register_name not in _registers.keys():
+                raise MYQASMRegisterDoesNotExistError(
+                    "Attempting to measure a register that does not exist."
+                )
+            vector_representing_state = _registers[register_name]
+            vector_norm_squared = vector_representing_state.norm_squared()
+            number_states = len(vector_representing_state)
+            probabilities = [
+                c.modulus_squared() / vector_norm_squared
+                for c in vector_representing_state
+            ]
+            chosen_state_list = random.choices(
+                range(number_states), weights=probabilities, k=1
+            )
+            chosen_state = chosen_state_list[0]
+            binary_representation = bin(chosen_state).removeprefix("0b")
+            number_in_binary_rep = len(binary_representation)
+            extra_chars = "0" * (int(math.log(number_states, 2)) - number_in_binary_rep)
+            return [int(char) for char in (extra_chars + binary_representation)]
+        case KeywordEnum.APPLY:
+            gate = token_stream[1][1]
+            register = token_stream[2][1]
+            assert isinstance(gate, str)
+            assert isinstance(register, str)
+            if not _gate_exists(gate):
+                raise MYQASMGateDoesNotExistError(
+                    "Attempting to APPLY a gate that does not exist."
+                )
+            if register not in _registers.keys():
+                raise MYQASMRegisterDoesNotExistError(
+                    "Attempting to APPLY a gate to a register that does not exist."
+                )
+            try:
+                _registers[register] = complex_matrix_vector_multiply(
+                    _get_gate_matrix(gate), _registers[register]
+                )
+            except ValueError:
+                raise MYQASMGateAndRegisterDifferentSizeGatesError(
+                    "Cannot APPLY to a gate to a different number of qubits that it"
+                    " acts on."
+                )
+        case KeywordEnum.SELECT:  # pragma: no cover
+            pass  # pragma: no cover
 
 
 def _valid_identifier(identifier: str) -> None:
@@ -40,8 +282,8 @@ def _valid_number(number: str, error_message: str = "Invalid number.") -> None:
 
 def MYQASM_lexer(
     expression: str,
-) -> list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]]:
-    token_list: list[tuple[TokenNameEnum, Optional[str | KeywordEnum]]] = []
+) -> list[tuple[TokenNameEnum, str | KeywordEnum]]:
+    token_list: list[tuple[TokenNameEnum, str | KeywordEnum]] = []
     string_list = expression.split(" ")
     number_of_strings = len(string_list)
     match (a := string_list[0]):
