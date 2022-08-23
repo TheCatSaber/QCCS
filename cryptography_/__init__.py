@@ -8,10 +8,14 @@ from .classical_cryptography import (
 from .cryptography_shared import Bit, BitString, random_bit_string
 from .quantum_cryptography import (
     AliceAnswer,
+    Alice92Answer,
     BobAnswer,
     KnuthAnswer,
     alice,
+    alice92,
     bob,
+    bob92,
+    knuth92,
     knuth,
     knuth2,
 )

@@ -19,6 +19,10 @@ class KnuthAnswer(NamedTuple):
     proportion_measured_in_same_basis: float
 
 
+class Alice92Answer(NamedTuple):
+    bit_sent: BitString
+
+
 def alice(n: int) -> AliceAnswer:
     return AliceAnswer(
         bit_sent=random_bit_string(n), sending_basis=random_bit_string(n)
@@ -58,4 +62,26 @@ def knuth2(alice_answer: AliceAnswer, bob_answer: BobAnswer) -> BitString:
     ):
         if sending_basis == receiving_basis:
             answer.append(bit_sent)
+    return answer
+
+
+def alice92(n: int) -> Alice92Answer:
+    return Alice92Answer(bit_sent=random_bit_string(n))
+
+
+def bob92(n: int) -> BobAnswer:
+    return bob(n)
+
+
+def knuth92(alice_answer: Alice92Answer, bob_answer: BobAnswer) -> BitString:
+    # Alice 0 means sent in ->; 1 means sent in /
+    # Bob 0 means measured in +; 1 means measured in X
+    answer: BitString = []
+    for bit_sent, receiving_basis in zip(
+        alice_answer.bit_sent, bob_answer.receiving_basis
+    ):
+        if bit_sent == 0 and receiving_basis == 1:
+            answer.append(0)
+        elif bit_sent == 1 and receiving_basis == 0:
+            answer.append(1)
     return answer

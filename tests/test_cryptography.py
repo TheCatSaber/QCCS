@@ -2,13 +2,17 @@ import unittest
 
 from context import (
     AliceAnswer,
+    Alice92Answer,
     BobAnswer,
     alice,
+    alice92,
     bob,
+    bob92,
     caesar_decode,
     caesar_encode,
     knuth,
     knuth2,
+    knuth92,
     one_time_pad_encode,
     one_time_pad_key_gen,
     random_bit_string,
@@ -144,13 +148,7 @@ class BB84Check(unittest.TestCase):
     def test_knuth(self):
         alice_answer = AliceAnswer(
             [0, 1, 1, 0, 1],
-            [
-                1,
-                0,
-                1,
-                0,
-                1,
-            ],
+            [1, 0, 1, 0, 1],
         )
         bob_answer = BobAnswer([0, 1, 1, 0, 0])
         knuth_answer = knuth(alice_answer, bob_answer)
@@ -162,17 +160,31 @@ class BB84Check(unittest.TestCase):
     def test_knuth2(self):
         alice_answer = AliceAnswer(
             [0, 1, 1, 0, 1],
-            [
-                1,
-                0,
-                1,
-                0,
-                1,
-            ],
+            [1, 0, 1, 0, 1],
         )
         bob_answer = BobAnswer([0, 1, 1, 0, 0])
         knuth2_answer = knuth2(alice_answer, bob_answer)
         self.assertEqual(knuth2_answer, [1, 0])
+
+
+class B92Check(unittest.TestCase):
+    def test_alice92_right_stuff(self):
+        alice92_answer = alice92(12)
+        self.assertEqual(len(alice92_answer.bit_sent), 12)
+        self.assertTrue(all(bit in [0, 1] for bit in alice92_answer.bit_sent))
+
+    def test_bob92_right_stuff(self):
+        bob92_answer = bob92(13)
+        self.assertEqual(len(bob92_answer.receiving_basis), 13)
+        self.assertTrue(all(bit in [0, 1] for bit in bob92_answer.receiving_basis))
+
+    def test_knuth92(self):
+        alice92_answer = Alice92Answer(
+            [0, 1, 1, 0, 1],
+        )
+        bob92_answer = BobAnswer([0, 1, 0, 1, 1])
+        knuth92_answer = knuth92(alice92_answer, bob92_answer)
+        self.assertEqual(knuth92_answer, [1, 0])
 
 
 if __name__ == "__main__":
