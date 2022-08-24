@@ -15,6 +15,7 @@ from context import (
     knuth2,
     knuth92,
     one_time_pad_encode,
+    one_time_pad_decode,
     one_time_pad_key_gen,
     random_bit_string,
 )
@@ -85,7 +86,7 @@ class OneTimePadCheck(unittest.TestCase):
 
     def test_OTP_decode(self):
         self.assertEqual(
-            one_time_pad_encode(
+            one_time_pad_decode(
                 ":÷¹\x8c",
                 [
                     0,
@@ -207,4 +208,4 @@ class B92Check(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main()  # pragma: no cover

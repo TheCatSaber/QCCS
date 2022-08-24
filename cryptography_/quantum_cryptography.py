@@ -89,13 +89,15 @@ def knuth92(alice_answer: Alice92Answer, bob_answer: BobAnswer) -> BitString:
             # ↑ means Bob is certain it is 1.
             # Otherwise Bob doesn't know
             if random.choice([0, 1]) == 0:
-                answer.append(1)
+                # Ignore the lines, as they occur randomly
+                answer.append(1)  # pragma: no cover
         elif bit_sent == 0 and receiving_basis == 1:
             # Bob measures ↗ or ↘ (50/50)
             # ↘ means Bob is certain it is 0.
             # Otherwise Bob doesn't know
             if random.choice([0, 1]) == 0:
-                answer.append(0)
+                # Ignore the lines, as they occur randomly
+                answer.append(0)  # pragma: no cover
         elif bit_sent == 1 and receiving_basis == 1:
             # Bob measures ↗
             # Bob doesn't know
