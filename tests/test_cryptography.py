@@ -1,3 +1,4 @@
+import itertools
 import unittest
 
 from context import (
@@ -168,6 +169,16 @@ class BB84Check(unittest.TestCase):
 
 
 class B92Check(unittest.TestCase):
+    @staticmethod
+    def _power_set(l: list[int]):
+        # Power-set itertools recipe
+        # https://docs.python.org/3/library/itertools.html#itertools-recipes
+        "_power_set([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+        s = list(l)
+        return itertools.chain.from_iterable(
+            itertools.combinations(s, r) for r in range(len(s) + 1)
+        )
+
     def test_alice92_right_stuff(self):
         alice92_answer = alice92(12)
         self.assertEqual(len(alice92_answer.bit_sent), 12)
@@ -184,7 +195,15 @@ class B92Check(unittest.TestCase):
         )
         bob92_answer = BobAnswer([0, 1, 0, 1, 1])
         knuth92_answer = knuth92(alice92_answer, bob92_answer)
-        self.assertEqual(knuth92_answer, [1, 0])
+        # knuth92 has different answers depending on randomness
+        # So check it is one of these possibilities.
+        self.assertIn(tuple(knuth92_answer), list(self._power_set([1, 0])))
+
+    def test_knuth92_some_more(self):
+        alice92_answer = Alice92Answer([0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0])
+        bob92_answer = BobAnswer([1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1])
+        knuth92_answer = knuth92(alice92_answer, bob92_answer)
+        self.assertIn(tuple(knuth92_answer), list(self._power_set([0, 1, 0, 0, 0, 0])))
 
 
 if __name__ == "__main__":

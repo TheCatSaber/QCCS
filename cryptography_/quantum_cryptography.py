@@ -74,14 +74,30 @@ def bob92(n: int) -> BobAnswer:
 
 
 def knuth92(alice_answer: Alice92Answer, bob_answer: BobAnswer) -> BitString:
-    # Alice 0 means sent in ->; 1 means sent in /
+    # Alice 0 means sent as →; 1 means sent as ↗
     # Bob 0 means measured in +; 1 means measured in X
     answer: BitString = []
     for bit_sent, receiving_basis in zip(
         alice_answer.bit_sent, bob_answer.receiving_basis
     ):
-        if bit_sent == 0 and receiving_basis == 1:
-            answer.append(0)
+        if bit_sent == 0 and receiving_basis == 0:
+            # Bob measures →
+            # Bob doesn't know
+            pass
         elif bit_sent == 1 and receiving_basis == 0:
-            answer.append(1)
+            # Bob measures ↑ or → (50/50)
+            # ↑ means Bob is certain it is 1.
+            # Otherwise Bob doesn't know
+            if random.choice([0, 1]) == 0:
+                answer.append(1)
+        elif bit_sent == 0 and receiving_basis == 1:
+            # Bob measures ↗ or ↘ (50/50)
+            # ↘ means Bob is certain it is 0.
+            # Otherwise Bob doesn't know
+            if random.choice([0, 1]) == 0:
+                answer.append(0)
+        elif bit_sent == 1 and receiving_basis == 1:
+            # Bob measures ↗
+            # Bob doesn't know
+            pass
     return answer
