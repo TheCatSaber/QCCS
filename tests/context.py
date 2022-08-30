@@ -9,6 +9,7 @@ from complex_matrices import *
 from complex_numbers import *
 from complex_vectors import *
 from cryptography_ import *
+from entropy import *
 from marble_game import *
 from myqasm import *
 from quantum_systems import *
