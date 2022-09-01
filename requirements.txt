@@ -2,3 +2,4 @@ cirq
 pre-commit
 coverage
 black
+matplotlib
