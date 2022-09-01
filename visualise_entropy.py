@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from entropy import ClassicalPDF
+from information_theory import ClassicalPDF
 
 
 def visualize_pdf(PDF: ClassicalPDF):
