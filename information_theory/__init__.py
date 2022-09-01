@@ -5,6 +5,7 @@ from .classical_entropy import (
     SymbolProbability,
     verify_classical_pdf,
 )
+from .data_compression import typical_sequences
 from .quantum_entropy import (
     QuantumPDF,
     QubitProbability,

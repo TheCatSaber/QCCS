@@ -7,6 +7,7 @@ from context import (
     Shannon_entropy,
     SymbolProbability,
     density_operator,
+    typical_sequences,
     verify_classical_pdf,
     verify_quantum_pdf,
     von_Neumann_entropy,
@@ -176,6 +177,58 @@ class VonNeumannEntropyCheck(unittest.TestCase):
                 ]
             ),
             0.8112781245,
+        )
+
+
+class TypicalSequencesCheck(unittest.TestCase):
+    def test_bit_verification(self):
+        with self.assertRaises(ValueError):
+            typical_sequences(
+                [
+                    SymbolProbability("0", 0.5),
+                    SymbolProbability("1", 0.25),
+                    SymbolProbability("2", 0.25),
+                ],
+                1,
+            )
+        with self.assertRaises(ValueError):
+            typical_sequences(
+                [SymbolProbability("0", 0.5), SymbolProbability("2", 0.5)], 1
+            )
+
+    def test_value_verification(self):
+        with self.assertRaises(ValueError):
+            typical_sequences(
+                [SymbolProbability("0", 0.5), SymbolProbability("1", 0.5)], 0
+            )
+        typical_sequences([SymbolProbability("0", 0.5), SymbolProbability("1", 0.5)], 1)
+
+    def test_small_examples(self):
+        self.assertEqual(
+            typical_sequences(
+                [SymbolProbability("0", 0.5), SymbolProbability("1", 0.5)], 2
+            ),
+            [[0, 1], [1, 0]],
+        )
+        self.assertEqual(
+            typical_sequences(
+                [SymbolProbability("0", 0.5), SymbolProbability("1", 0.5)], 3
+            ),
+            [[0, 0, 1], [0, 1, 0], [1, 0, 0]],
+        )
+        self.assertEqual(
+            typical_sequences(
+                [SymbolProbability("0", 1 / 3), SymbolProbability("1", 2 / 3)], 3
+            ),
+            [[0, 1, 1], [1, 0, 1], [1, 1, 0]],
+        )
+
+    def test_one_larger_example(self):
+        self.assertEqual(
+            typical_sequences(
+                [SymbolProbability("0", 1 / 8), SymbolProbability("1", 7 / 8)], 8
+            ),
+            [[1] * i + [0] + [1] * (7 - i) for i in range(8)],
         )
 
 
