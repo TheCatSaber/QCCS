@@ -2,7 +2,10 @@ import math
 import unittest
 
 from context import (
+    BinaryTree,
     ComplexVector,
+    Huffman_coding,
+    Huffman_create_coding,
     QubitProbability,
     Shannon_entropy,
     SymbolProbability,
@@ -229,6 +232,85 @@ class TypicalSequencesCheck(unittest.TestCase):
                 [SymbolProbability("0", 1 / 8), SymbolProbability("1", 7 / 8)], 8
             ),
             [[1] * i + [0] + [1] * (7 - i) for i in range(8)],
+        )
+
+
+class BinaryTreeCheck(unittest.TestCase):
+    def test___eq__(self):
+        self.assertEqual(
+            BinaryTree(1, "a", None, None), BinaryTree(1.0, "a", None, None)
+        )
+        self.assertEqual(
+            BinaryTree(1, "a", None, None), BinaryTree(1 + 1e-8, "a", None, None)
+        )
+
+
+class HuffmanCodingCheck(unittest.TestCase):
+    wikipedia_case = [
+        SymbolProbability("a", 0.10),
+        SymbolProbability("b", 0.15),
+        SymbolProbability("c", 0.30),
+        SymbolProbability("d", 0.16),
+        SymbolProbability("e", 0.29),
+    ]
+    wikipedia_tree = BinaryTree(
+        1,
+        None,
+        left=BinaryTree(
+            0.41,
+            None,
+            left=BinaryTree(0.16, "d", None, None),
+            right=BinaryTree(
+                0.25,
+                None,
+                left=BinaryTree(0.10, "a", None, None),
+                right=BinaryTree(0.15, "b", None, None),
+            ),
+        ),
+        right=BinaryTree(
+            0.59,
+            None,
+            left=BinaryTree(0.29, "e", None, None),
+            right=BinaryTree(0.30, "c", None, None),
+        ),
+    )
+    two_items_case = [
+        SymbolProbability("a", 0.28),
+        SymbolProbability("b", 0.72),
+    ]
+    two_items_tree = BinaryTree(
+        1,
+        None,
+        left=BinaryTree(0.28, "a", None, None),
+        right=BinaryTree(0.72, "b", None, None),
+    )
+
+    def test_one_item(self):
+        self.assertEqual(
+            Huffman_coding([SymbolProbability("a", 1)]), BinaryTree(1, "a", None, None)
+        )
+
+    def test_two_items(self):
+        self.assertEqual(Huffman_coding(self.two_items_case), self.two_items_tree)
+
+    def test_small_wikipedia_case(self):
+        self.assertEqual(Huffman_coding(self.wikipedia_case), self.wikipedia_tree)
+
+    def test_conversion_to_binary_code_single_item(self):
+        # Empty list, as no information to convey
+        self.assertDictEqual(
+            Huffman_create_coding(BinaryTree(1, "a", None, None)), {"a": []}
+        )
+
+    def test_conversion_to_binary_code_two_items(self):
+        self.assertDictEqual(
+            Huffman_create_coding(self.two_items_tree), {"a": [0], "b": [1]}
+        )
+
+    def test_conversion_to_binary_codes_wikipedia_case(self):
+        self.assertDictEqual(
+            Huffman_create_coding(self.wikipedia_tree),
+            {"a": [0, 1, 0], "b": [0, 1, 1], "c": [1, 1], "d": [0, 0], "e": [1, 0]},
         )
 
 

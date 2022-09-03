@@ -5,7 +5,12 @@ from .classical_entropy import (
     SymbolProbability,
     verify_classical_pdf,
 )
-from .data_compression import typical_sequences
+from .data_compression import (
+    BinaryTree,
+    Huffman_coding,
+    typical_sequences,
+    Huffman_create_coding,
+)
 from .quantum_entropy import (
     QuantumPDF,
     QubitProbability,
