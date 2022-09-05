@@ -7,6 +7,7 @@ from context import (
     complex_matrix_eigenvalues,
     complex_matrix_eigenvectors,
     complex_matrix_vector_multiply,
+    complex_vector_adjoint,
 )
 
 zero = ComplexNumber(0, 0)
@@ -120,6 +121,16 @@ class ComplexMatrixEigenvectorsCheck(unittest.TestCase):
                 ComplexVector([zero] * 4 + [one]),
             ],
             complex_matrix_eigenvectors(m5x5),
+        )
+
+
+class ComplexVectorAdjointCheck(unittest.TestCase):
+    def test_adjoint_small_case(self):
+        self.assertEqual(
+            complex_vector_adjoint(
+                ComplexVector([1, 2, ComplexNumber(4, 5), ComplexNumber(-1, -1)])
+            ),
+            [[1], [2], [ComplexNumber(4, -5)], [ComplexNumber(-1, 1)]],
         )
 
 
