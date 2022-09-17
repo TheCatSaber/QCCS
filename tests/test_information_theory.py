@@ -48,6 +48,28 @@ class VerifyClassicalPDFCheck(unittest.TestCase):
 
 
 class ShannonEntropyCheck(unittest.TestCase):
+    def test_verifying_PDF(self):
+        with self.assertRaises(ValueError):
+            Shannon_entropy([])
+        with self.assertRaises(ValueError):
+            Shannon_entropy([SymbolProbability("A", 0.5)])
+        with self.assertRaises(ValueError):
+            Shannon_entropy(
+                [
+                    SymbolProbability("A", 0.5),
+                    SymbolProbability("B", 0.25),
+                    SymbolProbability("C", 0.1),
+                    SymbolProbability("D", 0.1),
+                ]
+            )
+        with self.assertRaises(ValueError):
+            Shannon_entropy(
+                [
+                    SymbolProbability("A", 0.5),
+                    SymbolProbability("A", 0.5),
+                ]
+            )
+
     def test_uniform_pdf(self):
         self.assertEqual(
             Shannon_entropy(
@@ -118,6 +140,35 @@ class VerifyQuantumPDFCheck(unittest.TestCase):
 
 
 class DensityOperatorCheck(unittest.TestCase):
+    def test_verifying_PDF(self):
+        with self.assertRaises(ValueError):
+            density_operator([])
+        with self.assertRaises(ValueError):
+            density_operator([QubitProbability("A", ComplexVector([1, 0]), 0.5)])
+        with self.assertRaises(ValueError):
+            density_operator(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.25),
+                    QubitProbability("C", ComplexVector([1, 0]), 0.1),
+                    QubitProbability("D", ComplexVector([1, 0]), 0.1),
+                ]
+            )
+        with self.assertRaises(ValueError):
+            density_operator(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                ]
+            )
+        with self.assertRaises(ValueError):
+            density_operator([QubitProbability("A", ComplexVector([1]), 1)])
+
+        with self.assertRaises(ValueError):
+            density_operator([QubitProbability("A", ComplexVector([1, 0, 0]), 1)])
+        with self.assertRaises(ValueError):
+            verify_quantum_pdf([QubitProbability("A", ComplexVector([1, 1]), 1)])
+
     def test_plus_minus_operator(self):
         self.assertEqual(
             density_operator(
@@ -148,6 +199,35 @@ class DensityOperatorCheck(unittest.TestCase):
 
 
 class VonNeumannEntropyCheck(unittest.TestCase):
+    def test_verifying_PDF(self):
+        with self.assertRaises(ValueError):
+            von_Neumann_entropy([])
+        with self.assertRaises(ValueError):
+            von_Neumann_entropy([QubitProbability("A", ComplexVector([1, 0]), 0.5)])
+        with self.assertRaises(ValueError):
+            von_Neumann_entropy(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.25),
+                    QubitProbability("C", ComplexVector([1, 0]), 0.1),
+                    QubitProbability("D", ComplexVector([1, 0]), 0.1),
+                ]
+            )
+        with self.assertRaises(ValueError):
+            von_Neumann_entropy(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                ]
+            )
+        with self.assertRaises(ValueError):
+            von_Neumann_entropy([QubitProbability("A", ComplexVector([1]), 1)])
+
+        with self.assertRaises(ValueError):
+            von_Neumann_entropy([QubitProbability("A", ComplexVector([1, 0, 0]), 1)])
+        with self.assertRaises(ValueError):
+            von_Neumann_entropy([QubitProbability("A", ComplexVector([1, 1]), 1)])
+
     def test_plus_zero_entropy(self):
         self.assertAlmostEqual(
             von_Neumann_entropy(
@@ -184,6 +264,30 @@ class VonNeumannEntropyCheck(unittest.TestCase):
 
 
 class TypicalSequencesCheck(unittest.TestCase):
+    def test_verifying_PDF(self):
+        with self.assertRaises(ValueError):
+            typical_sequences([], 2)
+        with self.assertRaises(ValueError):
+            typical_sequences([SymbolProbability("A", 0.5)], 2)
+        with self.assertRaises(ValueError):
+            typical_sequences(
+                [
+                    SymbolProbability("A", 0.5),
+                    SymbolProbability("B", 0.25),
+                    SymbolProbability("C", 0.1),
+                    SymbolProbability("D", 0.1),
+                ],
+                2,
+            )
+        with self.assertRaises(ValueError):
+            typical_sequences(
+                [
+                    SymbolProbability("A", 0.5),
+                    SymbolProbability("A", 0.5),
+                ],
+                2,
+            )
+
     def test_bit_verification(self):
         with self.assertRaises(ValueError):
             typical_sequences(
@@ -284,6 +388,28 @@ class HuffmanCodingCheck(unittest.TestCase):
         left=BinaryTree(0.28, "a", None, None),
         right=BinaryTree(0.72, "b", None, None),
     )
+
+    def test_verifying_PDF(self):
+        with self.assertRaises(ValueError):
+            Shannon_entropy([])
+        with self.assertRaises(ValueError):
+            Shannon_entropy([SymbolProbability("A", 0.5)])
+        with self.assertRaises(ValueError):
+            Shannon_entropy(
+                [
+                    SymbolProbability("A", 0.5),
+                    SymbolProbability("B", 0.25),
+                    SymbolProbability("C", 0.1),
+                    SymbolProbability("D", 0.1),
+                ]
+            )
+        with self.assertRaises(ValueError):
+            Shannon_entropy(
+                [
+                    SymbolProbability("A", 0.5),
+                    SymbolProbability("A", 0.5),
+                ]
+            )
 
     def test_one_item(self):
         self.assertEqual(
