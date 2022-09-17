@@ -77,3 +77,12 @@ def complex_matrix_eigenvectors(m: ComplexMatrix) -> list[ComplexVector]:
         eigenvectors.append(ComplexVector(column_1))
 
     return eigenvectors
+
+
+def normalized_complex_matrix_eigenvectors(m: ComplexMatrix) -> list[ComplexVector]:
+    eigenvectors = complex_matrix_eigenvectors(m)
+    ans: list[ComplexVector] = []
+    for eigenvector in eigenvectors:
+        ans.append((1 / eigenvector.norm()) * eigenvector)
+
+    return ans
