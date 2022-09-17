@@ -10,26 +10,17 @@ from context import (
     complex_vector_adjoint,
 )
 
-zero = ComplexNumber(0, 0)
-one = ComplexNumber(1, 0)
-minus_one = ComplexNumber(-1, 0)
-minus_two = ComplexNumber(-2, 0)
-minus_three = ComplexNumber(-3, 0)
-two = ComplexNumber(2, 0)
-three = ComplexNumber(3, 0)
-four = ComplexNumber(4, 0)
-
 v2 = ComplexVector([ComplexNumber(2, 1), ComplexNumber(1, 1)])
-i2 = ComplexMatrix([[one, zero], [zero, one]])
-rotation_90_2D = ComplexMatrix([[zero, minus_one], [one, zero]])
+i2 = ComplexMatrix([[1, 0], [0, 1]])
+rotation_90_2D = ComplexMatrix([[0, -1], [1, 0]])
 
 m5x5 = ComplexMatrix(
     [
-        [one] + [zero] * 4,
-        [zero, three] + [zero] * 3,
-        [zero] * 2 + [four] + [zero] * 2,
-        [zero] * 3 + [minus_one, zero],
-        [zero] * 4 + [minus_two],
+        [1] + [0] * 4,
+        [0, 3] + [0] * 3,
+        [0] * 2 + [4] + [0] * 2,
+        [0] * 3 + [-1, 0],
+        [0] * 4 + [-2],
     ]
 )
 
@@ -47,80 +38,66 @@ class ComplexMatrixVectorMultiplicationCheck(unittest.TestCase):
 
 class ComplexMatrixEigenvaluesCheck(unittest.TestCase):
     def test_not_square(self):
-        self.assertRaises(
-            ValueError,
-            complex_matrix_eigenvalues,
-            ComplexMatrix([[one, one], [three, three], [four, four]]),
-        )
+        with self.assertRaises(ValueError):
+            complex_matrix_eigenvalues(ComplexMatrix([[1, 1], [3, 3], [4, 4]]))
 
     def test_not_diagonal_or_two_by_two(self):
-        self.assertRaises(
-            ValueError,
-            complex_matrix_eigenvalues,
-            ComplexMatrix(
-                [[one, one, zero], [zero, one, zero], [zero, zero, minus_one]]
-            ),
-        )
+        with self.assertRaises(ValueError):
+            complex_matrix_eigenvalues(
+                ComplexMatrix([[1, 1, 0], [0, 1, 0], [0, 0, -1]])
+            )
 
     def test_2_by_2(self):
         self.assertEqual(
-            [three, minus_two],
-            complex_matrix_eigenvalues(
-                ComplexMatrix([[four, three], [minus_two, minus_three]])
-            ),
+            complex_matrix_eigenvalues(ComplexMatrix([[4, 3], [-2, -3]])),
+            [3, -2],
         )
 
     def test_large_diagonal(self):
         self.assertEqual(
-            [one, three, four, minus_one, minus_two],
             complex_matrix_eigenvalues(m5x5),
+            [1, 3, 4, -1, -2],
         )
 
 
 class ComplexMatrixEigenvectorsCheck(unittest.TestCase):
     def test_not_square(self):
-        self.assertRaises(
-            ValueError,
-            complex_matrix_eigenvectors,
-            ComplexMatrix([[one, one], [three, three], [four, four]]),
-        )
+        with self.assertRaises(ValueError):
+            complex_matrix_eigenvectors(
+                ComplexMatrix([[1, 1], [3, 3], [4, 4]]),
+            )
 
     def test_not_diagonal_or_two_by_two(self):
-        self.assertRaises(
-            ValueError,
-            complex_matrix_eigenvectors,
-            ComplexMatrix(
-                [[one, one, zero], [zero, one, zero], [zero, zero, minus_one]]
-            ),
-        )
+        with self.assertRaises(ValueError):
+            complex_matrix_eigenvectors(
+                ComplexMatrix([[1, 1, 0], [0, 1, 0], [0, 0, -1]]),
+            )
 
     def test_2_by_2(self):
         self.assertEqual(
+            complex_matrix_eigenvectors(ComplexMatrix([[4, 3], [-2, -3]])),
             [
-                ComplexVector([three, minus_one]),
-                ComplexVector([one, minus_two]),
+                ComplexVector([3, -1]),
+                ComplexVector([1, -2]),
             ],
-            complex_matrix_eigenvectors(
-                ComplexMatrix([[four, three], [minus_two, minus_three]])
-            ),
         )
 
     def test_another_2_by_2_for_ordering(self):
         self.assertEqual(
-            [ComplexVector([one, one]), ComplexVector([two, minus_one])],
-            complex_matrix_eigenvectors(ComplexMatrix([[minus_one, two], [one, zero]])),
+            complex_matrix_eigenvectors(ComplexMatrix([[-1, 2], [1, 0]])),
+            [ComplexVector([1, 1]), ComplexVector([2, -1])],
         )
 
     def test_large_diagonal(self):
         self.assertEqual(
-            [
-                ComplexVector([one] + [zero] * 4),
-                ComplexVector([zero, one] + [zero] * 3),
-                ComplexVector([zero] * 2 + [one] + [zero] * 2),
-                ComplexVector([zero] * 3 + [one, zero]),
-                ComplexVector([zero] * 4 + [one]),
-            ],
             complex_matrix_eigenvectors(m5x5),
+            [
+                ComplexVector([1] + [0] * 4),
+                ComplexVector([0, 1] + [0] * 3),
+                ComplexVector([0] * 2 + [1] + [0] * 2),
+                ComplexVector([0] * 3 + [1, 0]),
+                ComplexVector([0] * 4 + [1]),
+            ],
         )
 
 
