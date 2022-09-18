@@ -10,6 +10,7 @@ from context import (
     Shannon_entropy,
     SymbolProbability,
     density_operator,
+    quantum_data_compression,
     typical_sequences,
     verify_classical_pdf,
     verify_quantum_pdf,
@@ -163,7 +164,6 @@ class DensityOperatorCheck(unittest.TestCase):
             )
         with self.assertRaises(ValueError):
             density_operator([QubitProbability("A", ComplexVector([1]), 1)])
-
         with self.assertRaises(ValueError):
             density_operator([QubitProbability("A", ComplexVector([1, 0, 0]), 1)])
         with self.assertRaises(ValueError):
@@ -222,7 +222,6 @@ class VonNeumannEntropyCheck(unittest.TestCase):
             )
         with self.assertRaises(ValueError):
             von_Neumann_entropy([QubitProbability("A", ComplexVector([1]), 1)])
-
         with self.assertRaises(ValueError):
             von_Neumann_entropy([QubitProbability("A", ComplexVector([1, 0, 0]), 1)])
         with self.assertRaises(ValueError):
@@ -438,6 +437,125 @@ class HuffmanCodingCheck(unittest.TestCase):
             Huffman_create_coding(self.wikipedia_tree),
             {"a": [0, 1, 0], "b": [0, 1, 1], "c": [1, 1], "d": [0, 0], "e": [1, 0]},
         )
+
+
+class QuantumDataCompressionCheck(unittest.TestCase):
+    valid_PDF = [
+        QubitProbability("A", ComplexVector([1, 0]), 0.5),
+        QubitProbability("B", ComplexVector([1 / math.sqrt(2), 1 / math.sqrt(2)]), 0.5),
+    ]
+    valid_biased_PDF = [
+        QubitProbability("A", ComplexVector([1, 0]), 0.7),
+        QubitProbability("B", ComplexVector([1 / math.sqrt(2), 1 / math.sqrt(2)]), 0.3),
+    ]
+
+    def test_verify_PDF_length(self):
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [QubitProbability("A", ComplexVector([1, 0]), 1)], ["A"]
+            )
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.25),
+                    QubitProbability("C", ComplexVector([1, 0]), 0.25),
+                ],
+                ["A"],
+            )
+
+    def test_verify_PDF_invalid_sum(self):
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.7),
+                ],
+                ["A"],
+            )
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.2),
+                ],
+                ["A"],
+            )
+
+    def test_verify_PDF_invalid_symbol(self):
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                ],
+                ["A"],
+            )
+
+    def test_verify_PDF_invalid_qubits(self):
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.5),
+                ],
+                ["A"],
+            )
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1, 0, 0]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.5),
+                ],
+                ["A"],
+            )
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1, 1]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.5),
+                ],
+                ["A"],
+            )
+
+    def test_verify_message(self):
+        with self.assertRaises(ValueError):
+            quantum_data_compression(
+                [
+                    QubitProbability("A", ComplexVector([1, 0]), 0.5),
+                    QubitProbability("B", ComplexVector([1, 0]), 0.5),
+                ],
+                ["A", "C"],
+            )
+
+    def test_valid(self):
+        tested = quantum_data_compression(
+            self.valid_PDF,
+            ["A", "B"],
+        )
+        ans = [0.85355339]
+        for t, a in zip(tested, ans):
+            self.assertAlmostEqual(t, a)
+
+    def test_valid_three_long_message(self):
+        tested = quantum_data_compression(self.valid_PDF, ["A", "A", "B"])
+        ans = [0.7885805]
+        for t, a in zip(tested, ans):
+            self.assertAlmostEqual(t, a)
+
+    def test_valid_four_long_message(self):
+        tested = quantum_data_compression(self.valid_PDF, ["A", "A", "B", "B"])
+        ans = [0.30177669, 0.30177669, 0.30177669, 0.30177669]
+        for t, a in zip(tested, ans):
+            self.assertAlmostEqual(t, a)
+
+    def test_valid_biased(self):
+        tested = quantum_data_compression(
+            self.valid_biased_PDF, ["A", "A", "A", "B", "B"]
+        )
+        ans = [0.4319870696, 0.4319870696, 0.13446950, 0.13446950, 0.13446950]
+        for t, a in zip(tested, ans):
+            self.assertAlmostEqual(t, a)
 
 
 if __name__ == "__main__":

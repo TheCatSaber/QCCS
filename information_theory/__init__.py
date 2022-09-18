@@ -8,8 +8,9 @@ from .classical_entropy import (
 from .data_compression import (
     BinaryTree,
     Huffman_coding,
-    typical_sequences,
     Huffman_create_coding,
+    quantum_data_compression,
+    typical_sequences,
 )
 from .quantum_entropy import (
     QuantumPDF,

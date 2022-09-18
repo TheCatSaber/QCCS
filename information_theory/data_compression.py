@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import itertools
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 from queue import PriorityQueue
 from typing import Optional
 
+from complex_vectors.complex_vector_functions import complex_vector_inner_product
 from cryptography_ import BitString
+from shared import complex_matrix_eigenvalues, normalized_complex_matrix_eigenvectors
 
-from .classical_entropy import ClassicalPDF, verify_classical_pdf
+from .classical_entropy import ClassicalPDF, SymbolProbability, verify_classical_pdf
+from .quantum_entropy import QuantumPDF, density_operator, verify_quantum_pdf
 
 
 def typical_sequences(PDF: ClassicalPDF, n: int) -> list[BitString]:
@@ -93,3 +96,49 @@ def Huffman_create_coding(
 
     _DFS(tree, [])
     return coding_dict
+
+
+def _verify_quantum_message(PDF: QuantumPDF, quantum_message: list[str]):
+    symbols = [i.symbol for i in PDF]
+    if any(symbol not in symbols for symbol in quantum_message):
+        raise ValueError("Invalid symbol in quantum message.")
+
+
+def quantum_data_compression(
+    PDF: QuantumPDF, quantum_message: list[str]
+) -> list[float]:
+    # Verify stuff
+    if len(PDF) != 2:
+        raise ValueError("Only 2 qubits allowed for Quantum Data compression.")
+    verify_quantum_pdf(PDF)
+    _verify_quantum_message(PDF, quantum_message)
+    # Create useful things
+    symbol_to_qubit = {i.symbol: i.qubit for i in PDF}
+    message_length = len(quantum_message)
+
+    # Find eigenvalues and vectors
+    density_matrix = density_operator(PDF)
+    eigenvalues = complex_matrix_eigenvalues(density_matrix)
+    probability_zero = eigenvalues[0].get_real()
+    probability_one = eigenvalues[1].get_real()
+
+    normalized_eigenvectors = normalized_complex_matrix_eigenvectors(density_matrix)
+
+    # Find typical sequences
+    typical_sequences_ = typical_sequences(
+        [
+            SymbolProbability("0", probability_zero),
+            SymbolProbability("1", probability_one),
+        ],
+        message_length,
+    )
+
+    answer_list: list[float] = []
+    for typical_sequence in typical_sequences_:
+        total = 1
+        for message_char, eigenvector_bit in zip(quantum_message, typical_sequence):
+            message_qubit = symbol_to_qubit[message_char]
+            eigenvector = normalized_eigenvectors[eigenvector_bit]
+            total *= complex_vector_inner_product(message_qubit, eigenvector).modulus()
+        answer_list.append(total)
+    return answer_list
