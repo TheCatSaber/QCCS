@@ -36,9 +36,6 @@ class ComplexVector:
     def inverse(self) -> ComplexVector:
         return ComplexVector([c.inverse() for c in self._vector])
 
-    # def scalar_multiplication(self, scalar: ComplexNumber) -> ComplexVector:
-    #     return ComplexVector([(c * scalar) for c in self._vector])
-
     def norm(self) -> float:
         return math.sqrt(self.norm_squared())
 
