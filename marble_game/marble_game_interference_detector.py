@@ -3,7 +3,6 @@ from typing import NamedTuple
 from complex_matrices import ComplexMatrix
 from complex_numbers import ComplexNumber
 from complex_vectors import ComplexVector
-
 from marble_game import QuantumMarbleGame
 
 zero = ComplexNumber(0, 0)
@@ -60,6 +59,7 @@ class InterferenceDetector:
             raise ValueError(
                 "There cannot be interference on 1 run, and 0 or less runs are invalid."
             )
+        # Calculate matrices by different methods
         m = self.movement_matrix
         classical_counter_part = self.movement_matrix.moduli_squared_matrix()
         c = classical_counter_part
@@ -68,6 +68,7 @@ class InterferenceDetector:
             m = m * self.movement_matrix
             c = c * classical_counter_part
 
+        # Find differences
         difference_list: list[tuple[int, int]] = []
 
         m_moduli_squared = m.moduli_squared_matrix()

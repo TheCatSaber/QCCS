@@ -341,18 +341,39 @@ class InterferenceDetectorIterationsCheck(unittest.TestCase):
         )
 
     def test_bullet_example(self):
+        m_squared = self.m * self.m
         self.assertTupleEqual(
             # Just checking that the correct operations are performed for matrix multiplication
             # and modulus squaring, rather than checking the operations themselves are correct.
             # And that the interference is correctly detected.
             InterferenceDetectorOutput(
                 self.m,
-                self.m * self.m,
+                m_squared,
                 self.m.moduli_squared_matrix(),
-                (self.m * self.m).moduli_squared_matrix(),
+                (m_squared).moduli_squared_matrix(),
                 [(5, 0)],
             ),
             InterferenceDetector(8, self.m).calculate_interference(2),
+        )
+
+    def test_bullet_three_iterations(self):
+        m2 = [
+            [1 / math.sqrt(3), 1 / math.sqrt(3), 1 / math.sqrt(3)],
+            [self.p1, self.p2, self.p3],
+            [self.p1, self.p3, self.p1],
+        ]
+        m2 = ComplexMatrix(m2)
+        m2_cubed = m2 * m2 * m2
+        self.assertTupleEqual(
+            # Test for 3 iterations
+            InterferenceDetectorOutput(
+                m2,
+                m2_cubed,
+                m2.moduli_squared_matrix(),
+                m2_cubed.moduli_squared_matrix(),
+                [(i, j) for i in range(3) for j in range(3)],
+            ),
+            InterferenceDetector(3, m2).calculate_interference(3),
         )
 
 
